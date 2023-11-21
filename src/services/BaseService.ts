@@ -19,7 +19,7 @@ BaseService.interceptors.request.use(
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let accessToken = (persistData as any).auth.session.token
-
+        // console.log('BaseService - Request Config:', config)
         if (!accessToken) {
             const { auth } = store.getState()
             accessToken = auth.session.token
@@ -30,6 +30,7 @@ BaseService.interceptors.request.use(
                 REQUEST_HEADER_AUTH_KEY
             ] = `${TOKEN_TYPE}${accessToken}`
         }
+        //console.log('BaseService - Access Token:', accessToken)
 
         return config
     },
@@ -46,7 +47,7 @@ BaseService.interceptors.response.use(
         if (response && unauthorizedCode.includes(response.status)) {
             store.dispatch(signOutSuccess())
         }
-
+        console.log('BaseService - Unauthorized Response:', response)
         return Promise.reject(error)
     }
 )

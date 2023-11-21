@@ -1,7 +1,7 @@
 import {
     NAV_ITEM_TYPE_TITLE,
     NAV_ITEM_TYPE_ITEM,
-    NAV_ITEM_TYPE_COLLAPSE
+    NAV_ITEM_TYPE_COLLAPSE,
 } from '@/constants/navigation.constant'
 import type { NavigationTree } from '@/@types/navigation'
 
@@ -17,6 +17,16 @@ const navigationConfig: NavigationTree[] = [
         subMenu: [],
     },
     /** Example purpose only, please remove */
+    {
+        key: 'OrdersOverview',
+        path: '/OrdersOverview',
+        title: 'Orders Overview',
+        translateKey: 'nav.OrdersOverview',
+        icon: 'singleMenu',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
     {
         key: 'singleMenuItem',
         path: '/single-menu-view',
