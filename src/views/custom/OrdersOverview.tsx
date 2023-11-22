@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Fragment } from 'react'
 import Table from '@/components/ui/Table'
 import Input from '@/components/ui/Input'
 import Pagination from '@/components/ui/Pagination'
@@ -11,20 +11,24 @@ import {
     getFilteredRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
+    getExpandedRowModel,
     getFacetedMinMaxValues,
     getPaginationRowModel,
     getSortedRowModel,
     flexRender,
 } from '@tanstack/react-table'
-import type { ColumnDef } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
+//import { dataWithSubRows } from './data'
+import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
 import type {
     // ColumnDef,
     FilterFn,
     ColumnFiltersState,
 } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { orderColumns } from '@/configs/order.overview/orderOverviewColumn'
+//import type { PersonWithSubRow } from './data'
+import type { ColumnDef, Row } from '@tanstack/react-table'
+import type { ReactElement } from 'react'
 
 interface DebouncedInputProps
     extends Omit<
@@ -36,7 +40,80 @@ interface DebouncedInputProps
     debounce?: number
 }
 
+type ReactTableProps<T> = {
+    renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
+    getRowCanExpand: (row: Row<T>) => boolean
+}
+
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
+
+type PersonWithSubRow = {
+    name: string
+    age: number
+    email: string
+    city: string
+}
+
+const dataWithSubRows: PersonWithSubRow[] = [
+    {
+        name: 'John Doe',
+        age: 30,
+        email: 'john@example.com',
+        city: 'New York',
+    },
+    {
+        name: 'Jane Smith',
+        age: 28,
+        email: 'jane@example.com',
+        city: 'San Francisco',
+    },
+    // Add more sample data as needed
+]
+
+interface Order {
+    orderPartner: {
+        ID: string
+        externalOrderNumber: string
+    }
+    orderPayment: {
+        method: string
+        record: string
+        recordIssuanceDate: Date
+        invoiceNumber: string
+        dueDate: Date
+        status: string
+        // Add other properties
+    }
+    orderDelivery: {
+        method: string
+        methodDetail: string
+        date: Date
+        region: string
+        // Add other properties
+    }
+    orderPackaging: {
+        containerMedium: string
+        containerMediumReceiptAmount: number
+        transportMedium: string
+        unitsPerTransportMedium: number
+        transportMediumIssuanceAmount: number
+        transportMediumReceiptAmount: number
+        palletIssuanceAmount: number
+        palletReceiptAmount: number
+        // Add other properties
+    }
+    _id: string
+    orderStatus: string
+    orderCreationDate: string
+    orderNote: string
+    orderProduct: {
+        ID: string
+        quantity: number
+        batchID: string
+        volume: number
+    }[]
+    __v: number
+}
 
 function DebouncedInput({
     value: initialValue,
@@ -87,11 +164,53 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     return itemRank.passed
 }
 
-const OrdersOverview = () => {
+const ReactTable = ({
+    renderRowSubComponent,
+    getRowCanExpand,
+}: ReactTableProps<PersonWithSubRow>) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
-    const columns = useMemo(() => orderColumns, [])
+    const columns = useMemo<ColumnDef<OrderWithSubRow>[]>(() => [
+        {
+            // Make an expander cell
+            header: () => null, // No header
+            id: 'expander', // It needs an ID
+            cell: ({ row }) => (
+                <>
+                    {row.getCanExpand() ? (
+                        <button
+                            className="text-lg"
+                            {...{ onClick: row.getToggleExpandedHandler() }}
+                        >
+                            {row.getIsExpanded() ? (
+                                <HiOutlineChevronDown />
+                            ) : (
+                                <HiOutlineChevronRight />
+                            )}
+                        </button>
+                    ) : null}
+                </>
+            ),
+            // We can override the cell renderer with a SubCell to be used with an expanded row
+            subCell: () => null, // No expander on an expanded row
+        },
+        { header: 'Order ID', accessorKey: '_id' },
+        { header: 'Creation Date', accessorKey: 'orderCreationDate' },
+        { header: 'Order Status', accessorKey: 'orderStatus' },
+        {
+            header: 'Partner Order ID',
+            accessorKey: 'orderPartner.externalOrderNumber',
+        },
+        { header: 'Delivery Method', accessorKey: 'orderDelivery.method' },
+        {
+            header: 'Delivery Method Detail',
+            accessorKey: 'orderDelivery.methodDetail',
+        },
+        { header: 'Delivery Date', accessorKey: 'orderDelivery.date' },
+        { header: 'Delivery Region', accessorKey: 'orderDelivery.region' },
+        // Add more columns as needed
+    ])
 
     //const [data] = useState(() => data10)
 
@@ -124,8 +243,11 @@ const OrdersOverview = () => {
     console.log('OrdersOverview DATA', data)
 
     const table = useReactTable({
-        data,
+        //data: dataWithSubRows,
+        data: data,
         columns,
+        getRowCanExpand,
+        getExpandedRowModel: getExpandedRowModel(),
         filterFns: {
             fuzzy: fuzzyFilter,
         },
@@ -195,18 +317,37 @@ const OrdersOverview = () => {
                     ))}
                 </THead>
                 <TBody>
-                    {table.getRowModel().rows.map((row) => (
-                        <Tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                                <Td key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
-                                </Td>
-                            ))}
-                        </Tr>
-                    ))}
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Fragment key={row.id}>
+                                <Tr>
+                                    {/* first row is a normal row */}
+                                    {row.getVisibleCells().map((cell) => {
+                                        return (
+                                            <td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        )
+                                    })}
+                                </Tr>
+                                {row.getIsExpanded() && (
+                                    <Tr>
+                                        {/* 2nd row is a custom 1 cell row */}
+                                        <Td
+                                            colSpan={
+                                                row.getVisibleCells().length
+                                            }
+                                        >
+                                            {renderRowSubComponent({ row })}
+                                        </Td>
+                                    </Tr>
+                                )}
+                            </Fragment>
+                        )
+                    })}
                 </TBody>
             </Table>
             <div className="flex items-center justify-between mt-4">
@@ -235,4 +376,21 @@ const OrdersOverview = () => {
     )
 }
 
-export default OrdersOverview
+const renderSubComponent = ({ row }: { row: Row<PersonWithSubRow> }) => {
+    return (
+        <pre style={{ fontSize: '10px' }}>
+            <code>{JSON.stringify(row.original, null, 2)}</code>
+        </pre>
+    )
+}
+
+const SubComponent = () => {
+    return (
+        <ReactTable
+            renderRowSubComponent={renderSubComponent}
+            getRowCanExpand={() => true}
+        />
+    )
+}
+
+export default SubComponent
