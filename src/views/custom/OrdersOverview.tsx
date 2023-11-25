@@ -4,7 +4,11 @@ import Input from '@/components/ui/Input'
 import Pagination from '@/components/ui/Pagination'
 import Select from '@/components/ui/Select'
 import ApiService from '@/services/ApiService' // Import ApiService
-import { fetchOrders, OrderApiRequest } from '@/services/OrderService'
+import {
+    fetchOrdersWithPartner,
+    fetchOrders,
+    OrderApiRequest,
+} from '@/services/OrderService'
 import {
     useReactTable,
     getCoreRowModel,
@@ -18,7 +22,6 @@ import {
     flexRender,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-//import { dataWithSubRows } from './data'
 import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
 import type {
     // ColumnDef,
@@ -26,7 +29,6 @@ import type {
     ColumnFiltersState,
 } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-//import type { PersonWithSubRow } from './data'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
 
@@ -46,29 +48,6 @@ type ReactTableProps<T> = {
 }
 
 const { Tr, Th, Td, THead, TBody, Sorter } = Table
-
-type PersonWithSubRow = {
-    name: string
-    age: number
-    email: string
-    city: string
-}
-
-const dataWithSubRows: PersonWithSubRow[] = [
-    {
-        name: 'John Doe',
-        age: 30,
-        email: 'john@example.com',
-        city: 'New York',
-    },
-    {
-        name: 'Jane Smith',
-        age: 28,
-        email: 'jane@example.com',
-        city: 'San Francisco',
-    },
-    // Add more sample data as needed
-]
 
 interface Order {
     orderPartner: {
@@ -167,7 +146,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 const ReactTable = ({
     renderRowSubComponent,
     getRowCanExpand,
-}: ReactTableProps<PersonWithSubRow>) => {
+}: ReactTableProps<OrderWithSubRow>) => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
@@ -195,7 +174,7 @@ const ReactTable = ({
             // We can override the cell renderer with a SubCell to be used with an expanded row
             subCell: () => null, // No expander on an expanded row
         },
-        { header: 'Order ID', accessorKey: '_id' },
+
         { header: 'Creation Date', accessorKey: 'orderCreationDate' },
         { header: 'Order Status', accessorKey: 'orderStatus' },
         {
@@ -216,7 +195,7 @@ const ReactTable = ({
 
     const [data, setData] = useState<Order[]>([])
 
-    const totalData = data.length
+    const totalData = data?.length
 
     const pageSizeOption = [
         { value: 10, label: '10 / page' },
@@ -231,7 +210,8 @@ const ReactTable = ({
             try {
                 const requestParam: OrderApiRequest = {}
                 const fetchedOrders: Order[] = await fetchOrders(requestParam)
-                setData(fetchedOrders.data)
+                setData(fetchedOrders)
+                console.log('orderoverview fetchedOrders', fetchedOrders)
             } catch (error) {
                 console.error('Error fetching orders:', error.message)
             }
@@ -338,7 +318,7 @@ const ReactTable = ({
                                         {/* 2nd row is a custom 1 cell row */}
                                         <Td
                                             colSpan={
-                                                row.getVisibleCells().length
+                                                row.getVisibleCells()?.length
                                             }
                                         >
                                             {renderRowSubComponent({ row })}
@@ -376,11 +356,34 @@ const ReactTable = ({
     )
 }
 
-const renderSubComponent = ({ row }: { row: Row<PersonWithSubRow> }) => {
+const renderSubComponent = ({ row }: { row: Row<Order> }) => {
+    const { original } = row
+
+    // Define fields to display in the expanded row with their respective labels
+    const fieldLabels: Record<string, string> = {
+        orderCreationDate: 'Creation Date',
+        orderStatus: 'Order Status',
+        _id: 'Order ID',
+        // Add more field names and labels as needed
+    }
+
+    // Extract values for specified fields and their labels
+    const fieldList = Object.entries(fieldLabels).map(([field, label]) => ({
+        field,
+        label,
+        value: original[field],
+    }))
+
     return (
-        <pre style={{ fontSize: '10px' }}>
-            <code>{JSON.stringify(row.original, null, 2)}</code>
-        </pre>
+        <div>
+            <ul>
+                {fieldList.map(({ field, label, value }) => (
+                    <li key={field}>
+                        <strong>{label}:</strong> {value}
+                    </li>
+                ))}
+            </ul>
+        </div>
     )
 }
 
