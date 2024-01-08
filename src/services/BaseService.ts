@@ -47,7 +47,7 @@ BaseService.interceptors.response.use(
         if (response && unauthorizedCode.includes(response.status)) {
             store.dispatch(signOutSuccess())
         }
-        console.log('BaseService - Unauthorized Response:', response)
+        //console.log('BaseService - Unauthorized Response:', response)
         return Promise.reject(error)
     }
 )

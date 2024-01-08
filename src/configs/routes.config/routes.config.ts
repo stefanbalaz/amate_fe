@@ -19,6 +19,13 @@ export const protectedRoutes = [
         authority: [],
     },
     {
+        key: 'Invoice',
+        path: '/OrdersOverview/Invoice/:invoiceNumber',
+        component: lazy(() => import('@/views/account/invoice/Invoice')),
+        authority: [],
+    },
+
+    {
         key: 'singleMenuItem',
         path: '/single-menu-view',
         component: lazy(() => import('@/views/demo/SingleMenuView')),
