@@ -168,8 +168,8 @@ function _DataTable<T>(
     useEffect(() => {
         if (Array.isArray(sorting)) {
             const sortOrder =
-                sorting.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : ''
-            const id = sorting.length > 0 ? sorting[0].id : ''
+                sorting?.length > 0 ? (sorting[0].desc ? 'desc' : 'asc') : ''
+            const id = sorting?.length > 0 ? sorting[0].id : ''
             onSort?.({ order: sortOrder, key: id })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,7 +249,7 @@ function _DataTable<T>(
     }))
 
     return (
-        <Loading loading={loading && data.length !== 0} type="cover">
+        <Loading loading={loading && data?.length !== 0} type="cover">
             <Table>
                 <THead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -288,10 +288,10 @@ function _DataTable<T>(
                         </Tr>
                     ))}
                 </THead>
-                {loading && data.length === 0 ? (
+                {loading && data?.length === 0 ? (
                     <TableRowSkeleton
                         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-                        columns={(finalColumns as Array<T>).length}
+                        columns={(finalColumns as Array<T>)?.length}
                         rows={pagingData.pageSize}
                         avatarInColumns={skeletonAvatarColumns}
                         avatarProps={skeletonAvatarProps}

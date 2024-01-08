@@ -1,4 +1,11 @@
-@import "./_header.css";
-@import "./_side-nav.css";
-@import "./_stacked-side-nav.css";
-@import "./_secondary-header.css";
+@import './_header.css';
+@import './_side-nav.css';
+@import './_stacked-side-nav.css';
+@import './_secondary-header.css';
+
+@layer utilities {
+    .text-custom-size {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+}
