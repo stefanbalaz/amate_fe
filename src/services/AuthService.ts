@@ -16,12 +16,28 @@ export async function apiSignIn(data: SignInCredential) {
     })
 }
 
-export async function apiSignUp(data: SignUpCredential) {
+/* export async function apiSignUp(data: SignUpCredential) {
     return ApiService.fetchData<SignUpResponse>({
-        url: '/sign-up',
+        // url: '/sign-up',
+        url: 'https://amate.onrender.com/sign-up',
         method: 'post',
         data,
     })
+} */
+
+export async function apiSignUp(data: SignUpCredential) {
+    try {
+        const response = await ApiService.fetchData<SignUpResponse>({
+            url: 'https://amate.onrender.com/sign-up',
+            method: 'post',
+            data,
+        })
+
+        return response
+    } catch (error) {
+        console.error('Error in apiSignUp:', error)
+        throw error // Rethrow the error to propagate it to the caller
+    }
 }
 
 export async function apiSignOut() {

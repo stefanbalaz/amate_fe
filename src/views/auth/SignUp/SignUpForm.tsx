@@ -9,6 +9,11 @@ import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import useAuth from '@/utils/hooks/useAuth'
 import type { CommonProps } from '@/@types/common'
+/* import {
+    registerUser,
+    UserApiResponse,
+    UserApiRequest,
+} from '@/services/UserService' */
 
 interface SignUpFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -40,7 +45,7 @@ const SignUpForm = (props: SignUpFormProps) => {
 
     const [message, setMessage] = useTimeOutMessage()
 
-    const onSignUp = async (
+    /*     const onSignUp = async (
         values: SignUpFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
@@ -50,6 +55,53 @@ const SignUpForm = (props: SignUpFormProps) => {
 
         if (result?.status === 'failed') {
             setMessage(result.message)
+        }
+
+        setSubmitting(false)
+    } */
+
+    /*     const onSignUp = async (
+        values: SignUpFormSchema,
+        setSubmitting: (isSubmitting: boolean) => void
+    ) => {
+        const { userName, password, email } = values
+        setSubmitting(true)
+
+        try {
+            // Call the registerUser function from your UserService
+            const response = await registerUser({ userName, password, email })
+
+            if (response.data) {
+                // Handle successful API response
+                console.log(response.data)
+            }
+        } catch (error) {
+            // Handle API errors
+            console.error(error)
+            setMessage('Error signing up. Please try again.') // Set a generic error message
+        }
+
+        setSubmitting(false)
+    } */
+
+    const onSignUp = async (
+        values: SignUpFormSchema,
+        setSubmitting: (isSubmitting: boolean) => void
+    ) => {
+        const { userName, password, email } = values
+        setSubmitting(true)
+
+        try {
+            const result = await signUp({
+                partnerRegistration: { userName, password, email },
+            })
+
+            if (result?.status === 'failed') {
+                setMessage(result.message)
+            }
+        } catch (error) {
+            console.error(error)
+            setMessage('Error signing up. Please try again.')
         }
 
         setSubmitting(false)
