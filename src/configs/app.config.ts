@@ -8,8 +8,8 @@ export type AppConfig = {
 }
 
 const appConfig: AppConfig = {
-    /*   apiPrefix: '/api', */
-    apiPrefix: '/',
+    /*  apiPrefix: '/', */
+    apiPrefix: 'https://amate.onrender.com/',
     authenticatedEntryPath: '/home',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/',
