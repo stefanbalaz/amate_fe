@@ -10,7 +10,7 @@ import useThemeClass from '@/utils/hooks/useThemeClass'
 import { useAppSelector } from '@/store'
 import type { Product, Summary } from './ContentTable'
 import { useParams } from 'react-router-dom'
-import { fetchOrdersWithPartner } from '@/services/orderService' // Import the service function
+import { fetchOrdersWithPartner } from '@/services/OrderService' // Import the service function
 import { deliveryAddressPartnerOrderNumberPartnerMerchantID } from '@/configs/invoice/invoicePartnerConfig'
 import Input from '@/components/ui/Input'
 
@@ -142,7 +142,7 @@ const InvoiceContent = () => {
             )
 
             if (response.ok) {
-               // console.log('Invoice number updated successfully.')
+                // console.log('Invoice number updated successfully.')
                 setData((prevData) => ({
                     ...prevData,
                     orderPayment: {
