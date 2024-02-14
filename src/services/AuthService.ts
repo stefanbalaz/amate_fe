@@ -28,7 +28,7 @@ export async function apiSignIn(data: SignInCredential) {
 export async function apiSignUp(data: SignUpCredential) {
     try {
         const response = await ApiService.fetchData<SignUpResponse>({
-            url: 'https://amate.onrender.com/sign-up',
+            url: 'https://amate.onrender.com/partner/register',
             method: 'post',
             data,
         })
@@ -36,7 +36,7 @@ export async function apiSignUp(data: SignUpCredential) {
         return response
     } catch (error) {
         console.error('Error in apiSignUp:', error)
-        throw error // Rethrow the error to propagate it to the caller
+        throw error
     }
 }
 
