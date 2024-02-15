@@ -14,7 +14,7 @@ import {
 async function fetchPartner(partnerID: string) {
     try {
         const response = await ApiService.fetchData<PartnerApiResponse>({
-            url: `http://localhost:8000/partner/${partnerID}`,
+            url: `https://amate.onrender.com/partner/${partnerID}`,
             method: 'get',
         })
         return response.data.data // Assuming the partner data is directly under data in the response
@@ -27,7 +27,7 @@ async function fetchPartner(partnerID: string) {
 async function fetchMerchant(merchantID: string) {
     try {
         const response = await ApiService.fetchData<MerchantApiResponse>({
-            url: `http://localhost:8000/merchant/${merchantID}`,
+            url: `https://amate.onrender.com/merchant/${merchantID}`,
             method: 'get',
         })
         //console.log('MERCHANT DATA', response.data.data)
@@ -43,7 +43,7 @@ fetchMerchant()
 /* async function fetchProduct(productId) {
     try {
         const response = await ApiService.fetchData<ProductApiResponse>({
-            url: `http://localhost:8000/products/${productId}`, // Adjust the endpoint
+            url: `https://amate.onrender.com/products/${productId}`, // Adjust the endpoint
             method: 'get',
         })
         return response.data.flavor // Assuming the flavor data is directly available in the response
@@ -56,7 +56,7 @@ fetchMerchant()
 /* export async function fetchOrdersWithPartner() {
     try {
         const response = await ApiService.fetchData<OrderApiResponse>({
-            url: 'http://localhost:8000/order/',
+            url: 'https://amate.onrender.com/order/',
             method: 'get',
         })
 
@@ -203,7 +203,7 @@ fetchMerchant()
 export async function fetchOrdersWithPartner() {
     try {
         const response = await ApiService.fetchData<OrderApiResponse>({
-            url: 'http://localhost:8000/order/',
+            url: 'https://amate.onrender.com/order/',
             method: 'get',
         })
 

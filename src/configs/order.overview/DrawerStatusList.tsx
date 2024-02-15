@@ -29,13 +29,16 @@ const yourUpdateStatusApiCall = async (
         // console.log('drawer orderId', orderId)
         // console.log('drawer payload', payload) // Log the payload being sent
 
-        const response = await fetch(`http://localhost:8000/order/${orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        })
+        const response = await fetch(
+            `https://amate.onrender.com/order/${orderId}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            }
+        )
 
         // console.log('drawer response', response)
 
