@@ -66,8 +66,8 @@ const SignInForm = (props: SignInFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin',
-                    password: '123Qwe',
+                    userName: '',
+                    password: '',
                     rememberMe: true,
                 }}
                 validationSchema={validationSchema}

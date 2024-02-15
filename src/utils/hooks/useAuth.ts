@@ -70,9 +70,16 @@ function useAuth() {
     const signUp = async (values: SignUpCredential) => {
         try {
             const resp = await apiSignUp(values)
+            console.log('apiSignUp(values)', values)
+            console.log('apiSignUp(resp)', resp)
             if (resp.data) {
-                const { token } = resp.data
+                // const { token } = resp.data
+
+                const { token, user } = resp.data
                 dispatch(signInSuccess(token))
+                console.log('apiSignUp(token)', token)
+                console.log('apiSignUp(resp.data)', resp.data)
+                console.log('apiSignUp(resp.data.user)', resp.data.user)
                 if (resp.data.user) {
                     dispatch(
                         setUser(
@@ -96,6 +103,7 @@ function useAuth() {
             }
             // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
+            console.log('apiSignUp error:', errors)
             return {
                 status: 'failed',
                 message: errors?.response?.data?.message || errors.toString(),

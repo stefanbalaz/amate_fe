@@ -10,7 +10,7 @@ import type {
 
 export async function apiSignIn(data: SignInCredential) {
     return ApiService.fetchData<SignInResponse>({
-        url: '/sign-in',
+        url: 'https://amate.onrender.com/partner/login',
         method: 'post',
         data,
     })
@@ -42,7 +42,7 @@ export async function apiSignUp(data: SignUpCredential) {
 
 export async function apiSignOut() {
     return ApiService.fetchData({
-        url: '/sign-out',
+        url: 'https://amate.onrender.com/partner/logout',
         method: 'post',
     })
 }
