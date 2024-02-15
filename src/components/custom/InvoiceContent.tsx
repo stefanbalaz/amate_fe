@@ -130,7 +130,7 @@ const InvoiceContent = () => {
             }
 
             const response = await fetch(
-                `http://localhost:8000/order/${data._id}`,
+                `https://amate.onrender.com/${data._id}`,
                 {
                     method: 'PUT',
                     headers: {
