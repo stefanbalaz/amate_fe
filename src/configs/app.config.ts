@@ -10,7 +10,8 @@ export type AppConfig = {
 const appConfig: AppConfig = {
     /*  apiPrefix: '/', */
     apiPrefix: 'https://amate.onrender.com/',
-    authenticatedEntryPath: '/home',
+    /*     authenticatedEntryPath: '/home', */
+    authenticatedEntryPath: '/OrdersOverview',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/',
     locale: 'en',
