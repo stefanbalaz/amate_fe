@@ -6,7 +6,7 @@ import {
 import type { NavigationTree } from '@/@types/navigation'
 
 const navigationConfig: NavigationTree[] = [
-    {
+    /*    {
         key: 'home',
         path: '/home',
         title: 'Home',
@@ -15,7 +15,7 @@ const navigationConfig: NavigationTree[] = [
         type: NAV_ITEM_TYPE_ITEM,
         authority: [],
         subMenu: [],
-    },
+    }, */
     /** Example purpose only, please remove */
     {
         key: 'OrdersOverview',
@@ -27,7 +27,7 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
-    {
+    /*    {
         key: 'singleMenuItem',
         path: '/single-menu-view',
         title: 'Single menu item',
@@ -119,7 +119,7 @@ const navigationConfig: NavigationTree[] = [
                 ],
             },
         ],
-    },
+    }, */
 ]
 
 export default navigationConfig
