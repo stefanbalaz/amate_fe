@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, Fragment } from 'react'
+import { useCallback, useState, useMemo, useEffect, Fragment } from 'react'
 import Table from '@/components/ui/Table'
 import Input from '@/components/ui/Input'
 import Drawer, { DrawerProps } from '@/components/ui/Drawer'
@@ -419,6 +419,7 @@ const ReactTable = ({
     ]
 
     useEffect(() => {
+        console.log('Component is mounting')
         const fetchData = async () => {
             try {
                 const requestParam: OrderApiRequest = {}
@@ -435,6 +436,7 @@ const ReactTable = ({
         fetchData()
     }, [])
 
+    console.log('Component is rerendering')
     console.log('OrdersOverview DATA', data)
 
     const table = useReactTable({
@@ -463,13 +465,27 @@ const ReactTable = ({
         debugColumns: false,
     })
 
-    const onPaginationChange = (page: number) => {
+    /*     const onPaginationChange = (page: number) => {
         table.setPageIndex(page - 1)
     }
 
     const onSelectChange = (value = 0) => {
         table.setPageSize(Number(value))
-    }
+    } */
+
+    const onPaginationChange = useCallback(
+        (page: number) => {
+            table.setPageIndex(page - 1)
+        },
+        [table]
+    )
+
+    const onSelectChange = useCallback(
+        (value = 0) => {
+            table.setPageSize(Number(value))
+        },
+        [table]
+    )
 
     const handleStatusUpdate = async () => {
         try {

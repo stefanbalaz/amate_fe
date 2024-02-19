@@ -10,7 +10,9 @@ import type {
 
 export async function apiSignIn(data: SignInCredential) {
     return ApiService.fetchData<SignInResponse>({
-        url: 'https://amate.onrender.com/partner/login',
+        /* url: 'https://amate.onrender.com/partner/login', */
+        url: 'http://localhost:8000/partner/login',
+
         method: 'post',
         data,
     })
@@ -28,7 +30,9 @@ export async function apiSignIn(data: SignInCredential) {
 export async function apiSignUp(data: SignUpCredential) {
     try {
         const response = await ApiService.fetchData<SignUpResponse>({
-            url: 'https://amate.onrender.com/partner/register',
+            /* url: 'https://amate.onrender.com/partner/register', */
+            url: 'http://localhost:8000/partner/register',
+
             method: 'post',
             data,
         })
@@ -42,7 +46,9 @@ export async function apiSignUp(data: SignUpCredential) {
 
 export async function apiSignOut() {
     return ApiService.fetchData({
-        url: 'https://amate.onrender.com/partner/logout',
+        /* url: 'https://amate.onrender.com/partner/logout', */
+        url: 'http://localhost:8000/partner/logout',
+
         method: 'post',
     })
 }

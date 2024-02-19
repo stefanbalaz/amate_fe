@@ -1,7 +1,7 @@
 {
     "nav": {
         "home": "Home",
-        "OrdersOverview": "OrdersOverview",
+        "OrdersOverview": "Order Overview",
         "singleMenuItem": "Single menu item",
         "collapseMenu": {
             "collapseMenu": "Collapse menu item",

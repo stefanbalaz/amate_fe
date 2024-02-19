@@ -10,7 +10,7 @@ import useThemeClass from '@/utils/hooks/useThemeClass'
 import { useAppSelector } from '@/store'
 import type { Product, Summary } from './ContentTable'
 import { useParams } from 'react-router-dom'
-import { fetchOrdersWithPartner } from '@/services/OrderService' // Import the service function
+import { fetchOrderWithPartnerMerchant } from '@/services/OrderService'
 import { deliveryAddressPartnerOrderNumberPartnerMerchantID } from '@/configs/invoice/invoicePartnerConfig'
 import Input from '@/components/ui/Input'
 
@@ -97,13 +97,12 @@ const InvoiceContent = () => {
         const fetchData = async () => {
             try {
                 setLoading(true)
-                const requestParam: OrderApiRequest = {} // Adjust the request parameter if needed
-                const fetchedOrders: Order[] = await fetchOrdersWithPartner(
-                    requestParam
-                )
-                const order = fetchedOrders.find(
-                    (order) => order._id === invoiceNumber
-                )
+
+                // Use fetchOrderWithPartnerMerchant to get the order with partner and merchant details
+                const order = await fetchOrderWithPartnerMerchant(invoiceNumber)
+
+                console.log('invoiceOrder', order)
+
                 if (order) {
                     setData(order)
                 } else {
@@ -123,14 +122,20 @@ const InvoiceContent = () => {
     }, [invoiceNumber])
 
     const handleInvoiceNumberChange = async (newValue) => {
+        console.log('Updating invoice number with:', newValue)
+
         try {
             const payload = {
-                invoiceNumber: newValue !== '' ? newValue : '', // If newValue is empty, set it directly; otherwise, set to an empty string
-                // Add any other required parameters for updating the order
+                orderPayment: {
+                    invoiceNumber: newValue !== '' ? newValue : '',
+                    // Add any other required parameters for updating the orderPayment
+                },
+                // Add other top-level properties if needed
             }
 
             const response = await fetch(
-                `https://amate.onrender.com/${data._id}`,
+                /* `https://amate.onrender.com/order/${data._id}`, */
+                `http://localhost:8000/order/${data._id}`,
                 {
                     method: 'PUT',
                     headers: {
@@ -142,17 +147,20 @@ const InvoiceContent = () => {
             )
 
             if (response.ok) {
-                // console.log('Invoice number updated successfully.')
                 setData((prevData) => ({
                     ...prevData,
                     orderPayment: {
                         ...prevData.orderPayment,
-                        invoiceNumber: newValue !== '' ? newValue : '', // Update the local state based on the new value or empty string
+                        invoiceNumber: newValue !== '' ? newValue : '',
                     },
                 }))
+                console.log('Invoice number updated successfully.')
             } else {
                 console.error('Failed to update invoice number.')
             }
+
+            console.log('Response:', response)
+            console.log('Response JSON:', await response.json())
         } catch (error) {
             console.error('Error updating invoice number:', error.message)
         }
