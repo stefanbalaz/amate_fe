@@ -11,8 +11,8 @@ const getNestedPropertyValue = (obj: any, path: string): any => {
 
 export const renderSubComponent = ({ row }: { row: Row<Order> }) => {
     const { original } = row // Destructure original from row object
-   // console.log('original', original)
-  //  console.log('row', row)
+    // console.log('original', original)
+    //  console.log('row', row)
     const fieldBlocks = [
         // Define your blocks with headline and key-value pairs
 

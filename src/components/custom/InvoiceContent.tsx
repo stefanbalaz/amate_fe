@@ -10,7 +10,7 @@ import useThemeClass from '@/utils/hooks/useThemeClass'
 import { useAppSelector } from '@/store'
 import type { Product, Summary } from './ContentTable'
 import { useParams } from 'react-router-dom'
-import { fetchOrdersWithPartner } from '@/services/OrderService' // Import the service function
+import { fetchOrderWithPartnerMerchant } from '@/services/OrderService'
 import { deliveryAddressPartnerOrderNumberPartnerMerchantID } from '@/configs/invoice/invoicePartnerConfig'
 import Input from '@/components/ui/Input'
 
@@ -97,13 +97,12 @@ const InvoiceContent = () => {
         const fetchData = async () => {
             try {
                 setLoading(true)
-                const requestParam: OrderApiRequest = {} // Adjust the request parameter if needed
-                const fetchedOrders: Order[] = await fetchOrdersWithPartner(
-                    requestParam
-                )
-                const order = fetchedOrders.find(
-                    (order) => order._id === invoiceNumber
-                )
+
+                // Use fetchOrderWithPartnerMerchant to get the order with partner and merchant details
+                const order = await fetchOrderWithPartnerMerchant(invoiceNumber)
+
+                console.log('invoiceOrder', order)
+
                 if (order) {
                     setData(order)
                 } else {

@@ -14,7 +14,7 @@ import {
 async function fetchPartner(partnerID: string) {
     try {
         const response = await ApiService.fetchData<PartnerApiResponse>({
-            /* url: `https://amate.onrender.com/partner/${partnerID}`, */
+            // url: `https://amate.onrender.com/partner/${partnerID}`,
             url: `http://localhost:8000/partner/${partnerID}`,
 
             method: 'get',
@@ -26,10 +26,32 @@ async function fetchPartner(partnerID: string) {
     }
 }
 
+/* 
+async function fetchAllPartners(partnerIDs) {
+    try {
+        const partnerPromises = partnerIDs.map(async (partnerID) => {
+            const response = await ApiService.fetchData<PartnerApiResponse>({
+                url: `http://localhost:8000/partner/${partnerID}`,
+                method: 'get',
+            })
+
+            return response.data.data
+        })
+
+        // Wait for all promises to resolve
+        const partnersData = await Promise.all(partnerPromises)
+
+        return partnersData
+    } catch (error) {
+        console.error('Error fetching partners:', error)
+        throw error
+    }
+} */
+
 async function fetchMerchant(merchantID: string) {
     try {
         const response = await ApiService.fetchData<MerchantApiResponse>({
-            /* url: `https://amate.onrender.com/merchant/${merchantID}`, */
+            // url: `https://amate.onrender.com/merchant/${merchantID}`,
             url: `http://localhost:8000/merchant/${merchantID}`,
 
             method: 'get',
@@ -42,117 +64,62 @@ async function fetchMerchant(merchantID: string) {
     }
 }
 
+// FETCH ALL ORDERS WITH PARTNER NAME
+
 export async function fetchOrdersWithPartner() {
     try {
-        const response = await ApiService.fetchData<OrderApiResponse>({
-            /* url: 'https://amate.onrender.com/order/', */
+        const orderResponse = await ApiService.fetchData({
             url: 'http://localhost:8000/order/',
-
             method: 'get',
         })
 
-        const formattedData = await Promise.all(
-            response.data.data.map(async (order: any) => {
-                // Check and format order dates only if they exist and are not null/undefined
-                if (order.orderCreationDate) {
-                    order.orderCreationDate = format(
-                        new Date(order.orderCreationDate),
-                        'dd.MM.yyyy'
-                    )
-                }
+        const orders = orderResponse.data.data
 
-                if (order.orderDelivery && order.orderDelivery.date) {
-                    order.orderDelivery.date = format(
-                        new Date(order.orderDelivery.date),
-                        'dd.MM.yyyy'
-                    )
-                }
+        // Extract partner IDs from orders
+        const partnerIds = orders.map((order) => order.orderPartner._id)
 
-                if (order.orderPayment && order.orderPayment.dueDate) {
-                    order.orderPayment.dueDate = format(
-                        new Date(order.orderPayment.dueDate),
-                        'dd.MM.yyyy'
-                    )
-                }
+        // Fetch all partner data in a single request
+        const partnerResponse = await ApiService.fetchData({
+            url: 'http://localhost:8000/partner/', // Adjust the URL based on your API
+            method: 'get',
+            data: { partnerIds }, // Send the list of partner IDs in the request body
+        })
 
-                if (order.orderPartner && order.orderPartner.ID) {
-                    const partnerData = await fetchPartner(
-                        order.orderPartner.ID
-                    )
-                    const partnerName =
-                        partnerData.partnerDisplayName ||
-                        `${partnerData.partnerRegistration?.forename || ''} ${
-                            partnerData.partnerRegistration?.surname || ''
-                        }`
-                    order.partnerName = partnerName
-                    order.orderPartner = {
-                        ...order.orderPartner,
-                        ...partnerData,
-                    }
-                }
+        const partnersData = partnerResponse.data.data
 
-                if (order.orderMerchant && order.orderMerchant.ID) {
-                    const merchantData = await fetchMerchant(
-                        order.orderMerchant.ID
-                    )
-
-                    // Assign merchant data to order object
-                    order.orderMerchant.completeMerchantData = merchantData
-                }
-
-                // Extracting delivery and billing addresses using their IDs
-                const deliveryAddressId =
-                    order.orderDelivery.orderDeliveryAddressId
-                const partnerBillingAddressId =
-                    order.orderPayment.orderPartnerBillingAddressId
-                const productPriceId = order.orderPayment.partnerProductPriceId
-                const merchantBillingAddressId =
-                    order.orderMerchant?.merchantBillingAddressId
-
-                //   console.log('Delivery Address ID:', deliveryAddressId)
-                //   console.log('Billing Address ID:', billingAddressId)
-                //console.log('productPriceId:', productPriceId)
-                //console.log('merchantBillingAddressId:',merchantBillingAddressId)
-
-                const deliveryAddress =
-                    order.orderPartner.partnerDeliveryAddress?.find(
-                        (address: any) => address._id === deliveryAddressId
-                    )
-                const partnerBillingAddress =
-                    order.orderPartner.partnerBillingAddress?.find(
-                        (address: any) =>
-                            address._id === partnerBillingAddressId
-                    )
-                const productPrice =
-                    order.orderPartner.partnerProductPrice?.find(
-                        (address: any) => address._id === productPriceId
-                    )
-
-                const merchantBillingAddress =
-                    order.orderMerchant.completeMerchantData.merchantBillingAddress?.find(
-                        (address: any) =>
-                            address._id === merchantBillingAddressId
-                    )
-                //  console.log('Found Delivery Address:', deliveryAddress)
-                //  console.log('Found Billing Address:', billingAddress)
-                //console.log('productPrice:', productPrice)
-                //console.log('merchantBillingAddress:', merchantBillingAddress)
-
-                // Attach the specific delivery and billing addresses to the order object
-                order.orderDelivery.selectedDeliveryAddress = {
-                    ...deliveryAddress,
-                }
-                order.orderPayment.selectedBillingAddress = {
-                    ...partnerBillingAddress,
-                }
-                order.orderPayment.selectedPrice = { ...productPrice }
-                order.orderMerchant.selectedMerchantData = {
-                    ...merchantBillingAddress,
-                }
-
-                return order
-            })
+        const partnersMap = new Map(
+            partnersData.map((partner) => [partner._id, partner])
         )
+
+        // Process orders and attach partner data in parallel
+        const formattedData = orders.map((order) => {
+            if (order.orderCreationDate) {
+                order.orderCreationDate = format(
+                    new Date(order.orderCreationDate),
+                    'dd.MM.yyyy'
+                )
+            }
+
+            const partnerData = partnersMap.get(order.orderPartner.ID)
+
+            // console.log('Order:', order)
+            // console.log('PartnerData:', partnerData)
+
+            if (partnerData) {
+                const partnerName =
+                    partnerData.partnerDisplayName ||
+                    (partnerData.partnerRegistration
+                        ? `${partnerData.partnerRegistration.forename || ''} ${
+                              partnerData.partnerRegistration.surname || ''
+                          }`
+                        : '')
+                order.partnerName = partnerName
+            }
+
+            return order
+        })
+
+        // console.log('formattedData', formattedData)
 
         const ordersWithCustomData = formattedData.map((order) => ({
             ...order,
@@ -164,28 +131,143 @@ export async function fetchOrdersWithPartner() {
                 customDeliveryMethod: mapDeliveryMethodToTag(
                     order.orderDelivery.method
                 ),
-
                 customDeliveryMethodDetail: mapDeliveryMethodDetailToTag(
                     order.orderDelivery.methodDetail
                 ),
-
                 customDeliveryRegion: mapDeliveryRegionToTag(
                     order.orderDelivery.region
                 ),
-
                 customPaymentMethod: mapPaymentMethodToTag(
                     order.orderPayment.method
                 ),
-
                 customPaymentRecord: mapPaymentRecordToTag(
                     order.orderPayment.record
                 ),
             },
         }))
-        //  console.log('ordersWithCustomData', ordersWithCustomData)
-        return ordersWithCustomData // Return the modified data here
+
+        return ordersWithCustomData
     } catch (error) {
-        console.error('Error fetching partner:', error)
+        console.error('Error fetching orders:', error)
+        throw error
+    }
+}
+
+//
+//
+// FETCH ONE ORDER WITH ALL PARTNER AND MERCHANT DATA
+//
+//
+
+export async function fetchOrderWithPartnerMerchant(orderId: string) {
+    try {
+        // Fetch the order data
+        const orderResponse = await ApiService.fetchData({
+            url: `http://localhost:8000/order/${orderId}`,
+            method: 'get',
+        })
+
+        const order = orderResponse.data.data
+
+        // Check and format order dates only if they exist and are not null/undefined
+        if (order.orderCreationDate) {
+            order.orderCreationDate = format(
+                new Date(order.orderCreationDate),
+                'dd.MM.yyyy'
+            )
+        }
+
+        if (order.orderDelivery && order.orderDelivery.date) {
+            order.orderDelivery.date = format(
+                new Date(order.orderDelivery.date),
+                'dd.MM.yyyy'
+            )
+        }
+
+        if (order.orderPayment && order.orderPayment.dueDate) {
+            order.orderPayment.dueDate = format(
+                new Date(order.orderPayment.dueDate),
+                'dd.MM.yyyy'
+            )
+        }
+
+        // Fetch and attach partner data
+        if (order.orderPartner && order.orderPartner.ID) {
+            const partnerData = await fetchPartner(order.orderPartner.ID)
+            const partnerName =
+                partnerData.partnerDisplayName ||
+                `${partnerData.partnerRegistration?.forename || ''} ${
+                    partnerData.partnerRegistration?.surname || ''
+                }`
+            order.partnerName = partnerName
+            order.orderPartner = { ...order.orderPartner, ...partnerData }
+        }
+
+        // Fetch and attach merchant data
+        if (order.orderMerchant && order.orderMerchant.ID) {
+            const merchantData = await fetchMerchant(order.orderMerchant.ID)
+            order.orderMerchant.completeMerchantData = merchantData
+        }
+
+        // Extracting delivery and billing addresses using their IDs
+        const deliveryAddressId = order.orderDelivery.orderDeliveryAddressId
+        const partnerBillingAddressId =
+            order.orderPayment.orderPartnerBillingAddressId
+        const productPriceId = order.orderPayment.partnerProductPriceId
+        const merchantBillingAddressId =
+            order.orderMerchant?.merchantBillingAddressId
+
+        const deliveryAddress = order.orderPartner.partnerDeliveryAddress?.find(
+            (address: any) => address._id === deliveryAddressId
+        )
+        const partnerBillingAddress =
+            order.orderPartner.partnerBillingAddress?.find(
+                (address: any) => address._id === partnerBillingAddressId
+            )
+        const productPrice = order.orderPartner.partnerProductPrice?.find(
+            (address: any) => address._id === productPriceId
+        )
+
+        const merchantBillingAddress =
+            order.orderMerchant.completeMerchantData.merchantBillingAddress?.find(
+                (address: any) => address._id === merchantBillingAddressId
+            )
+
+        // Attach the specific delivery and billing addresses to the order object
+        order.orderDelivery.selectedDeliveryAddress = { ...deliveryAddress }
+        order.orderPayment.selectedBillingAddress = { ...partnerBillingAddress }
+        order.orderPayment.selectedPrice = { ...productPrice }
+        order.orderMerchant.selectedMerchantData = { ...merchantBillingAddress }
+
+        // Map strings and return the modified order
+        const orderWithCustomData = {
+            ...order,
+            mappedStrings: {
+                customStatus: mapOriginalToCustomStatus(order.orderStatus),
+                customPaymentStatus: mapPaymentStatusToTag(
+                    order.orderPayment.status
+                ),
+                customDeliveryMethod: mapDeliveryMethodToTag(
+                    order.orderDelivery.method
+                ),
+                customDeliveryMethodDetail: mapDeliveryMethodDetailToTag(
+                    order.orderDelivery.methodDetail
+                ),
+                customDeliveryRegion: mapDeliveryRegionToTag(
+                    order.orderDelivery.region
+                ),
+                customPaymentMethod: mapPaymentMethodToTag(
+                    order.orderPayment.method
+                ),
+                customPaymentRecord: mapPaymentRecordToTag(
+                    order.orderPayment.record
+                ),
+            },
+        }
+
+        return orderWithCustomData
+    } catch (error) {
+        console.error('Error fetching order with partner and merchant:', error)
         throw error
     }
 }
