@@ -15,7 +15,7 @@ async function fetchPartner(partnerID: string) {
     try {
         const response = await ApiService.fetchData<PartnerApiResponse>({
             // url: `https://amate.onrender.com/partner/${partnerID}`,
-            url: `http://localhost:8000/partner/${partnerID}`,
+            url: `https://amate.onrender.com/partner/${partnerID}`,
 
             method: 'get',
         })
@@ -31,7 +31,7 @@ async function fetchAllPartners(partnerIDs) {
     try {
         const partnerPromises = partnerIDs.map(async (partnerID) => {
             const response = await ApiService.fetchData<PartnerApiResponse>({
-                url: `http://localhost:8000/partner/${partnerID}`,
+                url: `https://amate.onrender.com/partner/${partnerID}`,
                 method: 'get',
             })
 
@@ -52,7 +52,7 @@ async function fetchMerchant(merchantID: string) {
     try {
         const response = await ApiService.fetchData<MerchantApiResponse>({
             // url: `https://amate.onrender.com/merchant/${merchantID}`,
-            url: `http://localhost:8000/merchant/${merchantID}`,
+            url: `https://amate.onrender.com/merchant/${merchantID}`,
 
             method: 'get',
         })
@@ -69,7 +69,7 @@ async function fetchMerchant(merchantID: string) {
 export async function fetchOrdersWithPartner() {
     try {
         const orderResponse = await ApiService.fetchData({
-            url: 'http://localhost:8000/order/',
+            url: 'https://amate.onrender.com/order/',
             method: 'get',
         })
 
@@ -80,7 +80,7 @@ export async function fetchOrdersWithPartner() {
 
         // Fetch all partner data in a single request
         const partnerResponse = await ApiService.fetchData({
-            url: 'http://localhost:8000/partner/', // Adjust the URL based on your API
+            url: 'https://amate.onrender.com/partner/', // Adjust the URL based on your API
             method: 'get',
             data: { partnerIds }, // Send the list of partner IDs in the request body
         })
@@ -163,7 +163,7 @@ export async function fetchOrderWithPartnerMerchant(orderId: string) {
     try {
         // Fetch the order data
         const orderResponse = await ApiService.fetchData({
-            url: `http://localhost:8000/order/${orderId}`,
+            url: `https://amate.onrender.com/order/${orderId}`,
             method: 'get',
         })
 
