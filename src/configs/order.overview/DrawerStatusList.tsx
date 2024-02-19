@@ -31,7 +31,7 @@ const yourUpdateStatusApiCall = async (
 
         const response = await fetch(
             /* `https://amate.onrender.com/order/${orderId}`, */
-            `http://localhost:8000/order/${orderId}`,
+            `https://amate.onrender.com/order/${orderId}`,
 
             {
                 method: 'PUT',
