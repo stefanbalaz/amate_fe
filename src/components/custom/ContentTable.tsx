@@ -3,7 +3,7 @@ import { useState } from 'react'
 import React, { useEffect } from 'react'
 import Table from '@/components/ui/Table'
 import {
-    useReactTable,
+    useNotExpandableRow,
     getCoreRowModel,
     flexRender,
     createColumnHelper,

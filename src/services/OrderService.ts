@@ -100,6 +100,27 @@ export async function fetchOrdersWithPartner() {
                 )
             }
 
+            if (order.orderDelivery && order.orderDelivery.date) {
+                order.orderDelivery.date = format(
+                    new Date(order.orderDelivery.date),
+                    'dd.MM.yyyy'
+                )
+            }
+
+            if (order.orderPayment && order.orderPayment.dueDate) {
+                order.orderPayment.dueDate = format(
+                    new Date(order.orderPayment.dueDate),
+                    'dd.MM.yyyy'
+                )
+            }
+
+            if (order.orderPayment && order.orderPayment.recordIssuanceDate) {
+                order.orderPayment.recordIssuanceDate = format(
+                    new Date(order.orderPayment.recordIssuanceDate),
+                    'dd.MM.yyyy'
+                )
+            }
+
             const partnerData = partnersMap.get(order.orderPartner.ID)
 
             // console.log('Order:', order)
@@ -187,6 +208,13 @@ export async function fetchOrderWithPartnerMerchant(orderId: string) {
         if (order.orderPayment && order.orderPayment.dueDate) {
             order.orderPayment.dueDate = format(
                 new Date(order.orderPayment.dueDate),
+                'dd.MM.yyyy'
+            )
+        }
+
+        if (order.orderPayment && order.orderPayment.recordIssuanceDate) {
+            order.orderPayment.recordIssuanceDate = format(
+                new Date(order.orderPayment.recordIssuanceDate),
                 'dd.MM.yyyy'
             )
         }

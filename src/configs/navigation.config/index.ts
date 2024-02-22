@@ -27,6 +27,16 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    /*  {
+        key: 'OrderCreation',
+        path: '/OrderCreation',
+        title: 'Order Creation',
+        translateKey: 'nav.OrderCreation',
+        icon: 'singleMenu',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    }, */
     /*    {
         key: 'singleMenuItem',
         path: '/single-menu-view',
