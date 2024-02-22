@@ -15,7 +15,7 @@ export const protectedRoutes = [
     {
         key: 'OrdersOverview',
         path: '/OrdersOverview',
-        component: lazy(() => import('@/views/custom/OrdersOverview')),
+        component: lazy(() => import('@/views/custom/ExpandableTable')),
         authority: [],
     },
     {
@@ -24,7 +24,12 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/account/invoice/Invoice')),
         authority: [],
     },
-
+    {
+        key: 'OrderCreation',
+        path: '/OrderCreation',
+        component: lazy(() => import('@/views/sales/ProductNew/ProductNew')),
+        authority: [],
+    },
     {
         key: 'singleMenuItem',
         path: '/single-menu-view',

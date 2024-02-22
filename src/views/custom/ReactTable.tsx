@@ -33,7 +33,7 @@ import type {
 import type { InputHTMLAttributes } from 'react'
 import type { ColumnDef, Row } from '@tanstack/react-table'
 import type { ReactElement } from 'react'
-import { renderSubComponent } from './ExpandableRow'
+import { ExpandableRow } from './ExpandableRow'
 import productFlavorMap from '@/configs/order.overview/productFlavorMap'
 import Invoice from '@/views/account/invoice/Invoice'
 import { Link } from 'react-router-dom'
@@ -60,7 +60,7 @@ interface DebouncedInputProps
 }
 
 type ReactTableProps<T> = {
-    renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
+    renderRowExpandableTable: (props: { row: Row<T> }) => ReactElement
     getRowCanExpand: (row: Row<T>) => boolean
     statusKey: string
 }
@@ -163,7 +163,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 }
 
 const ReactTable = ({
-    renderRowSubComponent,
+    renderRowExpandableTable,
     getRowCanExpand,
     statusKey = {
         /* Pass the value of statusKey */
@@ -573,7 +573,7 @@ const ReactTable = ({
                                                 row.getVisibleCells()?.length
                                             }
                                         >
-                                            {renderRowSubComponent({ row })}
+                                            {renderRowExpandableTable({ row })}
                                         </Td>
                                     </Tr>
                                 )}
@@ -627,13 +627,4 @@ const ReactTable = ({
     )
 }
 
-const SubComponent = () => {
-    return (
-        <ReactTable
-            renderRowSubComponent={renderSubComponent}
-            getRowCanExpand={() => true}
-        />
-    )
-}
-
-export default SubComponent
+export default ReactTable
