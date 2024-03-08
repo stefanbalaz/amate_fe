@@ -125,7 +125,7 @@ export const DrawerOrderStatusContent: React.FC = () => {
 }
 
 export function mapOriginalToCustomStatus(originalStatus: string): JSX.Element {
-    const statusInfo = orderStatusMap[originalStatus] || orderStatusMap.unknown
+    const statusInfo = orderStatusMap[originalStatus] || orderStatusMap.other
 
     return (
         <div className="mr-2 rtl:ml-2">
@@ -171,8 +171,7 @@ export const paymentStatusMap: Record<string, StatusInfo> = {
 }
 
 export function mapPaymentStatusToTag(paymentStatus: string): JSX.Element {
-    const statusInfo =
-        paymentStatusMap[paymentStatus] || paymentStatusMap.unknown
+    const statusInfo = paymentStatusMap[paymentStatus] || paymentStatusMap.other
 
     if (statusInfo && statusInfo.className) {
         return (
@@ -222,8 +221,8 @@ export const deliveryMethodMap: Record<string, DeliveryMethodInfo> = {
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
-    unknown: {
-        deliveryMethodKey: 'Unknown',
+    other: {
+        deliveryMethodKey: 'Other',
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
@@ -231,7 +230,7 @@ export const deliveryMethodMap: Record<string, DeliveryMethodInfo> = {
 
 export function mapDeliveryMethodToTag(deliveryMethod: string): JSX.Element {
     const deliveryMethodInfo =
-        deliveryMethodMap[deliveryMethod] || deliveryMethodMap.unknown
+        deliveryMethodMap[deliveryMethod] || deliveryMethodMap.other
 
     return (
         <div className={deliveryMethodInfo.className}>
@@ -279,7 +278,7 @@ export function mapDeliveryMethodToTag(deliveryMethod: string): JSX.Element {
             return (
                 <div className="mr-2 rtl:ml-2">
                     <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                        Unknown
+                        Other
                     </Tag>
                 </div>
             )
@@ -319,8 +318,8 @@ export const deliveryMethodDetailMap: Record<string, DeliveryMethodDetailInfo> =
             className: 'mr-2 rtl:ml-2',
             // Add other properties as needed
         },
-        unknown: {
-            deliveryMethodDetailKey: 'Unknown',
+        other: {
+            deliveryMethodDetailKey: 'Other',
             className: 'mr-2 rtl:ml-2',
             // Add other properties as needed
         },
@@ -331,7 +330,7 @@ export function mapDeliveryMethodDetailToTag(
 ): JSX.Element {
     const deliveryMethodDetailInfo =
         deliveryMethodDetailMap[deliveryMethodDetail] ||
-        deliveryMethodDetailMap.unknown
+        deliveryMethodDetailMap.other
 
     return (
         <div className={deliveryMethodDetailInfo.className}>
@@ -397,7 +396,7 @@ export function mapDeliveryMethodDetailToTag(
             return (
                 <div className="mr-2 rtl:ml-2">
                      <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Unknown
+                    Other
                      </Tag>
                 </div>
             )
@@ -415,8 +414,8 @@ export const deliveryRegionMap: Record<string, DeliveryRegionInfo> = {
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
-    unknown: {
-        deliveryRegionKey: 'Unknown',
+    other: {
+        deliveryRegionKey: 'Other',
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
@@ -424,7 +423,7 @@ export const deliveryRegionMap: Record<string, DeliveryRegionInfo> = {
 
 export function mapDeliveryRegionToTag(deliveryRegion: string): JSX.Element {
     const deliveryRegionInfo =
-        deliveryRegionMap[deliveryRegion] || deliveryRegionMap.unknown
+        deliveryRegionMap[deliveryRegion] || deliveryRegionMap.other
 
     return (
         <div className={deliveryRegionInfo.className}>
@@ -456,7 +455,7 @@ export function mapDeliveryRegionToTag(deliveryRegion: string): JSX.Element {
             return (
                 <div className="mr-2 rtl:ml-2">
                      <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Unknown
+                    Other
                      </Tag>
                 </div>
             )
@@ -484,8 +483,8 @@ export const paymentMethodMap: Record<string, PaymentMethodInfo> = {
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
-    unknown: {
-        paymentMethodKey: 'Unknown',
+    other: {
+        paymentMethodKey: 'Other',
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
@@ -493,7 +492,7 @@ export const paymentMethodMap: Record<string, PaymentMethodInfo> = {
 
 export function mapPaymentMethodToTag(paymentMethod: string): JSX.Element {
     const paymentMethodInfo =
-        paymentMethodMap[paymentMethod] || paymentMethodMap.unknown
+        paymentMethodMap[paymentMethod] || paymentMethodMap.other
 
     return (
         <div className={paymentMethodInfo.className}>
@@ -541,7 +540,7 @@ export function mapPaymentMethodToTag(paymentMethod: string): JSX.Element {
             return (
                 <div className="mr-2 rtl:ml-2">
                   <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Unknown 
+                    Other 
                       </Tag>
                 </div>
             )
@@ -574,8 +573,8 @@ export const paymentRecordMap: Record<string, PaymentRecordInfo> = {
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
-    unknown: {
-        paymentRecordKey: 'Unknown',
+    other: {
+        paymentRecordKey: 'Other',
         className: 'mr-2 rtl:ml-2',
         // Add other properties as needed
     },
@@ -583,7 +582,7 @@ export const paymentRecordMap: Record<string, PaymentRecordInfo> = {
 
 export function mapPaymentRecordToTag(paymentRecord: string): JSX.Element {
     const paymentRecordInfo =
-        paymentRecordMap[paymentRecord] || paymentRecordMap.unknown
+        paymentRecordMap[paymentRecord] || paymentRecordMap.other
 
     return (
         <div className={paymentRecordInfo.className}>
@@ -639,7 +638,7 @@ export function mapPaymentRecordToTag(paymentRecord: string): JSX.Element {
             return (
                 <div className="mr-2 rtl:ml-2">
                      <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Unknown
+                    Other
                       </Tag>
                 </div>
             )
