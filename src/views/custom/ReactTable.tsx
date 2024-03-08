@@ -48,6 +48,7 @@ import {
     paymentStatusMap,
     mapPaymentStatusToTag,
 } from '@/configs/order.overview/orderStringMapper'
+import Spinner from '@/components/ui/Spinner'
 
 interface DebouncedInputProps
     extends Omit<
@@ -169,6 +170,7 @@ const ReactTable = ({
         /* Pass the value of statusKey */
     },
 }: ReactTableProps<OrderWithSubRow>) => {
+    const [loading, setLoading] = useState(false)
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
@@ -419,6 +421,7 @@ const ReactTable = ({
     ]
 
     useEffect(() => {
+        setLoading(true)
         console.log('Component is mounting')
         const fetchData = async () => {
             try {
@@ -430,6 +433,8 @@ const ReactTable = ({
                 console.log('orderoverview fetchedOrders', fetchedOrders)
             } catch (error) {
                 console.error('Error fetching orders:', error.message)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -546,6 +551,16 @@ const ReactTable = ({
                     ))}
                 </THead>
                 <TBody>
+                    {loading && (
+                        <tr>
+                            <td colSpan={10}>
+                                <div className="h-view w-view flex items-center justify-center">
+                                    <Spinner size={20} />
+                                </div>
+                            </td>
+                        </tr>
+                    )}
+
                     {table.getRowModel().rows.map((row) => {
                         return (
                             <Fragment key={row.id}>

@@ -3,8 +3,27 @@ import RichTextEditor from '@/components/shared/RichTextEditor'
 import Input from '@/components/ui/Input'
 import { FormItem } from '@/components/ui/Form'
 import { Field, FormikErrors, FormikTouched, FieldProps } from 'formik'
+import DatePicker from '@/components/ui/DatePicker'
+import { useEffect, useState } from 'react'
+import { HiOutlineCalendar } from 'react-icons/hi'
+import React from 'react'
+import Select from '@/components/ui/Select'
+import {
+    orderStatusMap,
+    paymentStatusMap,
+} from '@/configs/order.overview/orderStringMapper'
+import AsyncSelect from 'react-select/async'
+
+type Options = {
+    label: string
+    value: string
+}[]
 
 type FormFieldsName = {
+    orderNumber: string
+    orderPartner: string
+    orderStatus: string
+    orderCreationDate: Date
     name: string
     productCode: string
     description: string
@@ -13,16 +32,191 @@ type FormFieldsName = {
 type BasicInformationFields = {
     touched: FormikTouched<FormFieldsName>
     errors: FormikErrors<FormFieldsName>
+    values: {
+        orderPartner: string
+        tags: Options
+        [key: string]: unknown
+    }
+}
+
+const filterPartners = (inputValue, partners) => {
+    return partners.filter(
+        (partner) =>
+            partner.partnerDisplayName &&
+            partner.partnerDisplayName
+                .toLowerCase()
+                .includes(inputValue.toLowerCase())
+    )
+}
+
+const loadOptions = (inputValue, callback) => {
+    setTimeout(async () => {
+        try {
+            const response = await fetch(`https://amate.onrender.com/partner`)
+            const preData = await response.json()
+            const data = preData.data
+            console.log('Raw API Response:', data)
+
+            const filteredPartners = filterPartners(inputValue, data)
+
+            console.log('Filtered Partners:', filteredPartners)
+
+            const transformedPartners = filteredPartners
+                .filter((partner) => partner.partnerDisplayName)
+                .map((partner) => ({
+                    value: partner._id,
+                    label: partner.partnerDisplayName,
+                }))
+
+            console.log('Transformed Partners:', transformedPartners)
+
+            callback(transformedPartners)
+        } catch (error) {
+            console.error('Error fetching and filtering partners:', error)
+            callback([])
+        }
+    }, 1000)
 }
 
 const BasicInformationFields = (props: BasicInformationFields) => {
     const { touched, errors } = props
 
+    const [date, setDate] = useState<Date | null>(new Date())
+    const [orderStatus, setOrderStatus] = useState<string | null>(
+        'Preliminary Order'
+    )
+    const [orderNumber, setOrderNumber] = useState<String | null>('')
+    const [orderPartner, setOrderPartner] = useState<String | null>('')
+
+    const handlePartnerChange = (selectedOption) => {
+        if (selectedOption) {
+            const { value, label } = selectedOption
+            // Assuming that orderPartner should be an object with _id and partnerDisplayName properties
+            setOrderPartner({ _id: value, partnerDisplayName: label })
+            console.log('selectedOption', selectedOption)
+        }
+    }
+
+    console.log('orderPartner', orderPartner)
+
+    const handleDatePickerChange = (date: Date | null) => {
+        console.log('Selected date', date)
+        setDate(date)
+    }
+
+    const handleOrderStatusChange = (selectedOption: any) => {
+        const selectedOrderStatus = selectedOption.value
+        console.log('Selected Order Status', selectedOrderStatus)
+        setOrderStatus(selectedOrderStatus)
+    }
+
+    console.log('DrawerOrderStatusContent', orderStatusMap)
+
+    useEffect(() => {
+        const generateOrderNumber = () => {
+            fetch('https://amate.onrender.com/module/orderNumber')
+                .then((response) => response.json())
+                .then((data) => setOrderNumber(data))
+                .catch((error) => console.error(error))
+        }
+
+        generateOrderNumber()
+    }, [])
+
+    console.log('orderNumber', orderNumber)
+
     return (
-        <AdaptableCard divider className="mb-4">
-            <h5>Basic Information</h5>
-            <p className="mb-6">Section to config basic product information</p>
-            <FormItem
+        <AdaptableCard divider className="mb-5">
+            <h5 className="mb-4">Basic Information</h5>
+            {/* <p className="mb-6">Section to config basic product information</p> */}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="col-span-1">
+                    <FormItem
+                        label="Order Number"
+                        invalid={
+                            (errors.orderNumber &&
+                                touched.orderNumber) as boolean
+                        }
+                        errorMessage={errors.orderNumber}
+                    >
+                        <Field
+                            disabled
+                            type="text"
+                            autoComplete="off"
+                            name="orderNumber"
+                            placeholder="Order Number"
+                            component={Input}
+                            value={orderNumber.orderNumber}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Order Status"
+                        invalid={
+                            (errors.orderStatus &&
+                                touched.orderStatus) as boolean
+                        }
+                        errorMessage={errors.orderStatus}
+                    >
+                        <Select
+                            placeholder="Order Status"
+                            options={Object.values(orderStatusMap).map(
+                                (statusInfo) => ({
+                                    label: statusInfo.orderStatusKey,
+                                    value: statusInfo.orderStatusKey,
+                                })
+                            )}
+                            onChange={handleOrderStatusChange}
+                            defaultValue={{
+                                label: 'Preliminary Order',
+                                value: 'Preliminary Order',
+                            }}
+                        />
+                    </FormItem>
+                </div>
+                <div className="col-span-1">
+                    <FormItem
+                        label="Creation Date"
+                        invalid={
+                            (errors.orderCreationDate &&
+                                touched.orderCreationDate) as boolean
+                        }
+                        errorMessage={errors.orderCreationDate}
+                    >
+                        <DatePicker
+                            inputPrefix={
+                                <HiOutlineCalendar className="text-lg" />
+                            }
+                            inputSuffix={null}
+                            inputFormat="MMMM, DD YYYY"
+                            name="orderCreationDate"
+                            placeholder="Creation Date"
+                            value={date}
+                            onChange={handleDatePickerChange}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Partner"
+                        invalid={
+                            (errors.orderPartner &&
+                                touched.orderPartner) as boolean
+                        }
+                        errorMessage={errors.orderPartner}
+                    >
+                        <Select
+                            cacheOptions
+                            loadOptions={(inputValue, callback) =>
+                                loadOptions(inputValue, callback)
+                            }
+                            defaultOptions
+                            onChange={handlePartnerChange}
+                            componentAs={AsyncSelect}
+                        />
+                    </FormItem>
+
+                    {/*             <FormItem
                 label="Product Name"
                 invalid={(errors.name && touched.name) as boolean}
                 errorMessage={errors.name}
@@ -64,7 +258,9 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                         />
                     )}
                 </Field>
-            </FormItem>
+            </FormItem> */}
+                </div>
+            </div>
         </AdaptableCard>
     )
 }
