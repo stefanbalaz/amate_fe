@@ -6,13 +6,14 @@ import StickyFooter from '@/components/shared/StickyFooter'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
 import { Form, Formik, FormikProps } from 'formik'
 import BasicInformationFields from './BasicInformationFields'
-import PricingFields from './PricingFields'
-import OrganizationFields from './OrganizationFields'
-import ProductImages from './ProductImages'
+import ProductInformationFields from './ProductInformationFields'
+import PackagingInformationFields from './PackagingInformationFields'
+import TransportInformationFields from './DeliveryInformationFields'
 import cloneDeep from 'lodash/cloneDeep'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { AiOutlineSave } from 'react-icons/ai'
 import * as Yup from 'yup'
+import { useAppSelector } from '@/store'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikProps<any>
@@ -20,6 +21,28 @@ type FormikRef = FormikProps<any>
 type InitialData = {
     id?: string
     name?: string
+    orderNumber?: string
+    orderPartner?: string
+    orderStatus?: string
+    orderCreationDate?: Date
+    orderProductClassic?: Number
+    orderProductMelon?: Number
+    orderProductMint?: Number
+    orderProductHemp?: Number
+    orderProductGinger?: Number
+    productVolume?: Number
+    transportMedium?: string
+    containerMedium?: string
+    unitsPerTransportMedium?: Number
+    transportMediumIssuanceAmount?: Number
+    containerMediumReceiptAmount?: Number
+    palletIssuanceAmount?: Number
+    transportMediumReceiptAmount?: Number
+    palletReceiptAmount?: Number
+    deliveryMethod?: string
+    deliveryMethodDetail?: string
+    deliveryDate?: Date
+    deliveryRegion?: string
     productCode?: string
     img?: string
     imgList?: {
@@ -61,6 +84,10 @@ type ProductForm = {
 const { useUniqueId } = hooks
 
 const validationSchema = Yup.object().shape({
+    //   orderNumber: Yup.string().required('Order Number Required'),
+    orderPartner: Yup.string().required('Order Partner Required'),
+    //   orderStatus: Yup.string().required('Order Status Required'),
+    orderCreationDate: Yup.string().required('Order Creation Date Required'),
     name: Yup.string().required('Product Name Required'),
     price: Yup.number().required('Price Required'),
     stock: Yup.number().required('SKU Required'),
@@ -119,6 +146,28 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
         type,
         initialData = {
             id: '',
+            orderNumber: '',
+            orderPartner: '',
+            orderStatus: '',
+            orderCreationDate: new Date(),
+            orderProductClassic: 0,
+            orderProductMelon: 0,
+            orderProductMint: 0,
+            orderProductHemp: 0,
+            orderProductGinger: 0,
+            productVolume: 0.33,
+            transportMedium: 'Crate',
+            containerMedium: 'Glass',
+            unitsPerTransportMedium: 20,
+            transportMediumIssuanceAmount: 0,
+            containerMediumReceiptAmount: 0,
+            palletIssuanceAmount: 0,
+            transportMediumReceiptAmount: 0,
+            palletReceiptAmount: 0,
+            deliveryMethod: '',
+            deliveryMethodDetail: '',
+            deliveryDate: '',
+            deliveryRegion: '',
             name: '',
             productCode: '',
             img: '',
@@ -142,6 +191,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
 
     const newId = useUniqueId('product-')
 
+    const productAmounts = useAppSelector((state) => state.product)
+    console.log('productAmounts', productAmounts)
+
     return (
         <>
             <Formik
@@ -156,6 +208,11 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                         : [],
                 }}
                 validationSchema={validationSchema}
+                /*          initialTouched={{
+                    // Set only specific fields as touched initially
+                    orderNumber: true,
+                    orderStatus: true,
+                }} */
                 onSubmit={(values: FormModel, { setSubmitting }) => {
                     const formData = cloneDeep(values)
                     formData.tags = formData.tags.map((tag) => {
@@ -181,23 +238,30 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                     <BasicInformationFields
                                         touched={touched}
                                         errors={errors}
+                                        values={values}
                                     />
-                                    <PricingFields
+                                    <ProductInformationFields
                                         touched={touched}
                                         errors={errors}
+                                        values={values}
                                     />
-                                    <OrganizationFields
+                                    <PackagingInformationFields
+                                        touched={touched}
+                                        errors={errors}
+                                        values={values}
+                                    />
+                                    <TransportInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
                                     />
                                 </div>
-                                <div className="lg:col-span-1">
+                                {/*                 <div className="lg:col-span-1">
                                     <ProductImages values={values} />
-                                </div>
+                                </div> */}
                             </div>
                             <StickyFooter
-                                className="-mx-8 px-8 flex items-center justify-between py-4"
+                                className="-mx-8 px-8 custom-group-button flex items-center justify-between py-4"
                                 stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                             >
                                 <div>
@@ -223,7 +287,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                         icon={<AiOutlineSave />}
                                         type="submit"
                                     >
-                                        Save
+                                        Create
                                     </Button>
                                 </div>
                             </StickyFooter>

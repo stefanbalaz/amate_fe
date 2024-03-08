@@ -1,1 +1,52 @@
 @import './assets/styles/app.css';
+
+/* FOOTER FIX INPUTFIELD */
+
+.-bottom-1 {
+    z-index: 30;
+}
+
+/* PRODUCT AMOUNT INPUTFIELD OPTIMIZATION */
+
+@media (min-width: 760px) and (max-width: 800px) {
+    .custom-group-button {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1536px) {
+    .custom-group-button {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .custom-group-button {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .custom-group-input {
+        max-width: auto;
+    }
+}
+
+/* SELECT/DROPDOWN INPUT FIELD WITH UNIT */
+
+.input-addon-unit {
+    --tw-border-opacity: 1 !important;
+    border-color: rgb(75 85 99 / var(--tw-border-opacity)) !important;
+    --tw-bg-opacity: 0 !important;
+    background-color: rgb(55 65 81 / var(--tw-bg-opacity)) !important;
+    border-right: none !important;
+}
+
+.input-group-unit .select__control {
+    border-left: none !important;
+}
+
+.input-group-unit {
+    width: 100%;
+    max-width: 100%;
+}

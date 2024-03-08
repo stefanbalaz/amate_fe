@@ -36,6 +36,7 @@ const StickyFooter = (props: StickyFooterProps) => {
             ref={ref}
             className={classNames(
                 'sticky -bottom-1',
+
                 className,
                 isSticky && stickyClass
             )}
