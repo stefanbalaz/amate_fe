@@ -8,10 +8,7 @@ import { useEffect, useState } from 'react'
 import { HiOutlineCalendar } from 'react-icons/hi'
 import React from 'react'
 import Select from '@/components/ui/Select'
-import {
-    orderStatusMap,
-    paymentStatusMap,
-} from '@/configs/order.overview/orderStringMapper'
+import { orderStatusMap } from '@/configs/order.overview/orderStringMapper'
 import AsyncSelect from 'react-select/async'
 
 type Options = {
@@ -21,7 +18,7 @@ type Options = {
 
 type FormFieldsName = {
     orderNumber: string
-    orderPartner: string
+
     orderStatus: string
     orderCreationDate: Date
     name: string
@@ -33,49 +30,9 @@ type BasicInformationFields = {
     touched: FormikTouched<FormFieldsName>
     errors: FormikErrors<FormFieldsName>
     values: {
-        orderPartner: string
         tags: Options
         [key: string]: unknown
     }
-}
-
-const filterPartners = (inputValue, partners) => {
-    return partners.filter(
-        (partner) =>
-            partner.partnerDisplayName &&
-            partner.partnerDisplayName
-                .toLowerCase()
-                .includes(inputValue.toLowerCase())
-    )
-}
-
-const loadOptions = (inputValue, callback) => {
-    setTimeout(async () => {
-        try {
-            const response = await fetch(`https://amate.onrender.com/partner`)
-            const preData = await response.json()
-            const data = preData.data
-            console.log('Raw API Response:', data)
-
-            const filteredPartners = filterPartners(inputValue, data)
-
-            console.log('Filtered Partners:', filteredPartners)
-
-            const transformedPartners = filteredPartners
-                .filter((partner) => partner.partnerDisplayName)
-                .map((partner) => ({
-                    value: partner._id,
-                    label: partner.partnerDisplayName,
-                }))
-
-            console.log('Transformed Partners:', transformedPartners)
-
-            callback(transformedPartners)
-        } catch (error) {
-            console.error('Error fetching and filtering partners:', error)
-            callback([])
-        }
-    }, 1000)
 }
 
 const BasicInformationFields = (props: BasicInformationFields) => {
@@ -86,18 +43,6 @@ const BasicInformationFields = (props: BasicInformationFields) => {
         'Preliminary Order'
     )
     const [orderNumber, setOrderNumber] = useState<String | null>('')
-    const [orderPartner, setOrderPartner] = useState<String | null>('')
-
-    const handlePartnerChange = (selectedOption) => {
-        if (selectedOption) {
-            const { value, label } = selectedOption
-            // Assuming that orderPartner should be an object with _id and partnerDisplayName properties
-            setOrderPartner({ _id: value, partnerDisplayName: label })
-            console.log('selectedOption', selectedOption)
-        }
-    }
-
-    console.log('orderPartner', orderPartner)
 
     const handleDatePickerChange = (date: Date | null) => {
         console.log('Selected date', date)
@@ -127,7 +72,7 @@ const BasicInformationFields = (props: BasicInformationFields) => {
 
     return (
         <AdaptableCard divider className="mb-5">
-            <h5 className="mb-4">Basic Information</h5>
+            <h5 className="mb-4">General</h5>
             {/* <p className="mb-6">Section to config basic product information</p> */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -194,25 +139,6 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                             placeholder="Creation Date"
                             value={date}
                             onChange={handleDatePickerChange}
-                        />
-                    </FormItem>
-
-                    <FormItem
-                        label="Partner"
-                        invalid={
-                            (errors.orderPartner &&
-                                touched.orderPartner) as boolean
-                        }
-                        errorMessage={errors.orderPartner}
-                    >
-                        <Select
-                            cacheOptions
-                            loadOptions={(inputValue, callback) =>
-                                loadOptions(inputValue, callback)
-                            }
-                            defaultOptions
-                            onChange={handlePartnerChange}
-                            componentAs={AsyncSelect}
                         />
                     </FormItem>
 
