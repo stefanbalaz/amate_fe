@@ -10,6 +10,7 @@ import useAuth from '@/utils/hooks/useAuth'
 import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
+import { useEffect, useState } from 'react'
 
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -41,12 +42,15 @@ const SignInForm = (props: SignInFormProps) => {
 
     const { signIn } = useAuth()
 
+    const [showFetchingInfo, setShowFetchingInfo] = useState(false)
+
     const onSignIn = async (
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         const { userName, password } = values
         setSubmitting(true)
+        setShowFetchingInfo(true)
 
         const result = await signIn({ userName, password })
 
@@ -55,15 +59,31 @@ const SignInForm = (props: SignInFormProps) => {
         }
 
         setSubmitting(false)
+        setShowFetchingInfo(false)
     }
 
     return (
         <div className={className}>
-            {message && (
-                <Alert showIcon className="mb-4" type="danger">
-                    <>{message}</>
-                </Alert>
-            )}
+            <div>
+                {' '}
+                {message && (
+                    <Alert showIcon className="mb-4" type="danger">
+                        <>{message}</>
+                    </Alert>
+                )}
+            </div>
+            <div>
+                {' '}
+                {showFetchingInfo && (
+                    <Alert showIcon className="mb-4" type="info">
+                        <>
+                            Please wait briefly (ca. 20 seconds) for backend
+                            activation.
+                        </>
+                    </Alert>
+                )}
+            </div>
+
             <Formik
                 initialValues={{
                     userName: '',

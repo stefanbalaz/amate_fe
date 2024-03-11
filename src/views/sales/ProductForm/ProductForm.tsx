@@ -6,9 +6,12 @@ import StickyFooter from '@/components/shared/StickyFooter'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
 import { Form, Formik, FormikProps } from 'formik'
 import BasicInformationFields from './BasicInformationFields'
+import PartnerInformationFields from './PartnerInformationFields'
 import ProductInformationFields from './ProductInformationFields'
 import PackagingInformationFields from './PackagingInformationFields'
-import TransportInformationFields from './DeliveryInformationFields'
+import DeliveryInformationFields from './DeliveryInformationFields'
+import BillingInformationFields from './BillingInformationFields'
+import AdditionalInformationFields from './AdditionalInformationFields'
 import cloneDeep from 'lodash/cloneDeep'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { AiOutlineSave } from 'react-icons/ai'
@@ -240,6 +243,11 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                         errors={errors}
                                         values={values}
                                     />
+                                    <PartnerInformationFields
+                                        touched={touched}
+                                        errors={errors}
+                                        values={values}
+                                    />
                                     <ProductInformationFields
                                         touched={touched}
                                         errors={errors}
@@ -250,7 +258,17 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                         errors={errors}
                                         values={values}
                                     />
-                                    <TransportInformationFields
+                                    <DeliveryInformationFields
+                                        touched={touched}
+                                        errors={errors}
+                                        values={values}
+                                    />
+                                    <BillingInformationFields
+                                        touched={touched}
+                                        errors={errors}
+                                        values={values}
+                                    />
+                                    <AdditionalInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
