@@ -93,6 +93,13 @@ const InvoiceContent = () => {
         data?.orderPayment?.invoiceNumber || ''
     )
 
+    console.log('INVOICE DATa', data)
+
+    console.log(
+        'TEST',
+        data?.mappedStrings?.customDeliveryMethod?.props?.children
+    )
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -182,9 +189,17 @@ const InvoiceContent = () => {
             <div id="pdf-content">
                 {!isEmpty(data) && (
                     <>
-                        <div
+                        {/*      <div
                             className="grid grid-cols-3 gap-x-4"
                             style={{ rowGap: '40px', marginBottom: '40px' }}
+                        > */}
+                        <div
+                            className="grid grid-cols-3 gap-x-4"
+                            style={{
+                                rowGap: '40px',
+                                marginBottom: '40px',
+                                whiteSpace: 'nowrap',
+                            }}
                         >
                             {/* Row 1 Column 1 - Logo */}
                             <div className="col-span-1 row-span-1">
@@ -216,7 +231,7 @@ const InvoiceContent = () => {
                                         </span>
                                         <br />
                                         <span>
-                                            Invoice umber: {data?.orderNumber}
+                                            Order number: {data?.orderNumber}
                                         </span>
                                     </div>
                                 </div>
@@ -531,11 +546,28 @@ const InvoiceContent = () => {
 
                             {/* Row 3 Column 2 - Empty */}
 
-                            <div className="col-span-1 row-span-1">
+                            {/*          <div className="col-span-1 row-span-1">
                                 Order creation date: {data?.orderCreationDate}{' '}
                                 <br />
                                 Delivery method:{' '}
                                 {data?.mappedStrings.customDeliveryMethod}
+                                <br />
+                                Delivery date: {data?.orderDelivery.date} <br />
+                                Variable symbol:{' '}
+                                {data?.orderPayment?.invoiceNumber}
+                            </div> */}
+
+                            <div
+                                className="col-span-1 row-span-1"
+                                style={{ whiteSpace: 'nowrap' }}
+                            >
+                                Order creation date: {data?.orderCreationDate}{' '}
+                                <br />
+                                Delivery method:{' '}
+                                {
+                                    data?.mappedStrings?.customDeliveryMethod
+                                        ?.props?.children
+                                }
                                 <br />
                                 Delivery date: {data?.orderDelivery.date} <br />
                                 Variable symbol:{' '}
@@ -550,7 +582,11 @@ const InvoiceContent = () => {
                                 Payment due date: {data?.orderPayment.dueDate}
                                 <br />
                                 Payment method:{' '}
-                                {data?.mappedStrings.customPaymentMethod} <br />
+                                {
+                                    data?.mappedStrings.customPaymentMethod
+                                        ?.props?.children
+                                }{' '}
+                                <br />
                                 Total due: {totalPriceFromChild}€
                             </div>
                         </div>
