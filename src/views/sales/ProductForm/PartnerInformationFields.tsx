@@ -96,10 +96,9 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
 
     console.log('orderPartner', orderPartner)
 
-    const handlePartnerExternalOrderNumberChange = (
-        partnerExternalOrderNumber: string | null
-    ) => {
-        setPartnerExternalOrderNumber(partnerExternalOrderNumber)
+    const handlePartnerExternalOrderNumberChange = (e) => {
+        const insertedValue = e.target.value
+        setPartnerExternalOrderNumber(insertedValue)
     }
 
     console.log('Partner External Order Number', partnerExternalOrderNumber)
@@ -109,7 +108,7 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
             <h5 className="mb-4">Partner</h5>
             {/* <p className="mb-6">Section to config basic product information</p> */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0">
                 <div className="col-span-1">
                     <FormItem
                         label="Partner"

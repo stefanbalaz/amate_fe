@@ -106,7 +106,7 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
             <h5 className="mb-4">Delivery</h5>
             {/* <p className="mb-6">Section to config basic product information</p> */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0">
                 <div className="col-span-1">
                     <FormItem
                         label="Delivery Method"
