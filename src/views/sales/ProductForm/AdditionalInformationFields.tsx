@@ -44,8 +44,9 @@ const AdditionalInformationFields = (props: AdditionalInformationFields) => {
 
     const [note, setNote] = useState<String | null>('')
 
-    const handleNoteChange = (note: string | null) => {
-        setNote(note)
+    const handleNoteChange = (e) => {
+        const insertedValue = e.target.value
+        setNote(insertedValue)
     }
 
     console.log('Note', note)
@@ -55,7 +56,7 @@ const AdditionalInformationFields = (props: AdditionalInformationFields) => {
             <h5 className="mb-4">Additional</h5>
             {/* <p className="mb-6">Section to config basic product information</p> */}
 
-            <div className="grid grid-cols-1  gap-4">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-0">
                 <FormItem
                     label="Note"
                     invalid={(errors.note && touched.note) as boolean}

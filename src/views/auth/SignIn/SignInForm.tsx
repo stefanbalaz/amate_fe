@@ -49,17 +49,44 @@ const SignInForm = (props: SignInFormProps) => {
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         const { userName, password } = values
-        setSubmitting(true)
-        setShowFetchingInfo(true)
+        let fetchingInfoTimeout = setTimeout(
+            () => setShowFetchingInfo(true),
+            1500
+        )
 
-        const result = await signIn({ userName, password })
+        /*         const result = await signIn({ userName, password })
 
         if (result?.status === 'failed') {
             setMessage(result.message)
+            clearTimeout(fetchingInfoTimeout)
+            setShowFetchingInfo(false)
         }
 
         setSubmitting(false)
-        setShowFetchingInfo(false)
+        setShowFetchingInfo(false) */
+
+        const signInAndRetry = async () => {
+            const result = await signIn({ userName, password })
+
+            if (result?.status === 'failed') {
+                setMessage(result.message)
+                clearTimeout(fetchingInfoTimeout)
+                setShowFetchingInfo(false)
+            } else {
+                // Backend is activated, stop retrying
+                clearInterval(retryInterval)
+                setSubmitting(false)
+                setShowFetchingInfo(false)
+            }
+        }
+
+        // Initial sign-in attempt
+        await signInAndRetry()
+
+        // Retry every 5 seconds until backend is activated
+        const retryInterval = setInterval(async () => {
+            await signInAndRetry()
+        }, 5000)
     }
 
     return (

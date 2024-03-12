@@ -12,6 +12,9 @@ import {
     deliveryMethodMap,
     deliveryMethodDetailMap,
     deliveryRegionMap,
+    paymentRecordMap,
+    paymentMethodMap,
+    paymentStatusMap,
     transportMediumMap,
     containerMediumMap,
     unitsPerTransportMediumMap,
@@ -59,72 +62,120 @@ const { Addon } = InputGroup
 const BillingInformationFields = (props: BillingInformationFields) => {
     const { touched, errors } = props
 
-    const [deliveryMethod, setDeliveryMethod] = useState<string | null>(
-        'Select'
-    )
-
-    const [deliveryMethodDetail, setDeliveryMethodDetail] = useState<
+    const [paymentMethod, setPaymentMethod] = useState<string | null>('Select')
+    const [paymentRecord, setPaymentRecord] = useState<string | null>('Select')
+    const [paymentInvoiceNumber, setPaymentInvoiceNumber] = useState<
         string | null
-    >('Select')
-
-    const [deliveryDate, setDeliveryDate] = useState<Date | null>('')
-
-    const [deliveryRegion, setDeliveryRegion] = useState<string | null>(
-        'Select'
+    >('')
+    const [paymentRecordIssuanceDate, setPaymentRecordIssuanceDate] =
+        useState<Date | null>('')
+    const [deliveryNoteNumber, setDeliveryNoteNumber] = useState<string | null>(
+        ''
     )
+    const [deliveryNoteIssuanceDate, setDeliveryNoteIssuanceDate] =
+        useState<Date | null>('')
+    const [paymentReceivedDate, setPaymentReceivedDate] = useState<Date | null>(
+        ''
+    )
+    const [paymentStatus, setPaymentStatus] = useState<string | null>('Select')
+    const [paymentReminderSentDate, setPaymentReminderSentDate] =
+        useState<Date | null>('')
 
-    const handleDeliveryMethodChange = (selectedOption: any) => {
-        const selectedDeliveryMethod = selectedOption.value
-        setDeliveryMethod(selectedDeliveryMethod)
+    const handlePaymentMethodChange = (selectedOption: any) => {
+        const selectedPaymentMethod = selectedOption.value
+        setPaymentMethod(selectedPaymentMethod)
     }
 
-    console.log('deliveryMethod', deliveryMethod)
+    console.log('deliveryMethod', paymentMethod)
 
-    const handleDeliveryMethodDetailChange = (selectedOption: any) => {
-        const selectedDeliveryMethodDetail = selectedOption.value
-        setDeliveryMethodDetail(selectedDeliveryMethodDetail)
+    const handlePaymentRecordChange = (selectedOption: any) => {
+        const selectedPaymentRecord = selectedOption.value
+        setPaymentRecord(selectedPaymentRecord)
     }
 
-    console.log('deliveryMethodDetail', deliveryMethodDetail)
+    console.log('paymentRecord', paymentRecord)
 
-    const handleDeliveryDatePickerChange = (deliveryDate: Date | null) => {
-        console.log('Selected delivery date', deliveryDate)
-        setDeliveryDate(deliveryDate)
+    /*    const handlePaymentInvoiceNumberChange = (paymentInvoiceNumber: any) => {
+        setPaymentInvoiceNumber(paymentInvoiceNumber)
+    }
+ */
+    const handlePaymentInvoiceNumberChange = (e) => {
+        const insertedValue = e.target.value
+        setPaymentInvoiceNumber(insertedValue)
     }
 
-    console.log('deliveryDate', deliveryDate)
+    console.log('paymentInvoiceNumber', paymentInvoiceNumber)
 
-    const handleDeliveryRegionChange = (selectedOption: any) => {
-        const selectedDeliveryRegion = selectedOption.value
-        setDeliveryRegion(selectedDeliveryRegion)
+    const handlePaymentRecordIssuanceDateChange = (
+        paymentRecordIssuanceDate: Date | null
+    ) => {
+        setPaymentRecordIssuanceDate(paymentRecordIssuanceDate)
     }
 
-    console.log('deliveryRegion', deliveryRegion)
+    console.log('paymentRecordIssuanceDate', paymentRecordIssuanceDate)
+
+    const handleDeliveryNoteNumberChange = (e) => {
+        const insertedValue = e.target.value
+        setDeliveryNoteNumber(insertedValue)
+    }
+
+    console.log('deliveryNoteNumber', deliveryNoteNumber)
+
+    const handleDeliveryNoteIssuanceDateChange = (
+        deliveryNoteIssuanceDate: Date | null
+    ) => {
+        setDeliveryNoteIssuanceDate(deliveryNoteIssuanceDate)
+    }
+
+    console.log('deliveryNoteIssuanceDate', deliveryNoteIssuanceDate)
+
+    const handlePaymentReceivedDateChange = (
+        paymentReceivedDate: Date | null
+    ) => {
+        setPaymentReceivedDate(paymentReceivedDate)
+    }
+
+    console.log('paymentReceivedDate', paymentReceivedDate)
+
+    const handlePaymentStatusChange = (selectedOption: any) => {
+        const selectedPaymentStatus = selectedOption.value
+        setPaymentStatus(selectedPaymentStatus)
+    }
+
+    console.log('paymentStatus', paymentStatus)
+
+    const handlePaymentReminderSentDateChange = (
+        paymentReminderSentDate: Date | null
+    ) => {
+        setPaymentReminderSentDate(paymentReminderSentDate)
+    }
+
+    console.log('paymentReminderSentDate', paymentReminderSentDate)
 
     return (
         <AdaptableCard divider className="mb-5">
             <h5 className="mb-4">Billing</h5>
             {/* <p className="mb-6">Section to config basic product information</p> */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0">
                 <div className="col-span-1">
                     <FormItem
-                        label="Delivery Method"
+                        label="Payment Method"
                         invalid={
-                            (errors.deliveryMethod &&
-                                touched.deliveryMethod) as boolean
+                            (errors.paymentMethod &&
+                                touched.paymentMethod) as boolean
                         }
-                        errorMessage={errors.deliveryMethod}
+                        errorMessage={errors.paymentMethod}
                     >
                         <Select
-                            placeholder="Delivery Method"
-                            options={Object.values(deliveryMethodMap).map(
+                            placeholder="Payment Method"
+                            options={Object.values(paymentMethodMap).map(
                                 (statusInfo) => ({
-                                    label: statusInfo.deliveryMethodKey,
-                                    value: statusInfo.deliveryMethodKey,
+                                    label: statusInfo.paymentMethodKey,
+                                    value: statusInfo.paymentMethodKey,
                                 })
                             )}
-                            onChange={handleDeliveryMethodChange}
+                            onChange={handlePaymentMethodChange}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
@@ -132,37 +183,36 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                         />
                     </FormItem>
                     <FormItem
-                        label="Delivery Method Detail"
+                        label="Payment Record"
                         invalid={
-                            (errors.deliveryMethodDetail &&
-                                touched.deliveryMethodDetail) as boolean
+                            (errors.paymentRecord &&
+                                touched.paymentRecord) as boolean
                         }
-                        errorMessage={errors.deliveryMethodDetail}
+                        errorMessage={errors.paymentRecord}
                     >
                         <Select
-                            placeholder="Delivery Method"
-                            options={Object.values(deliveryMethodDetailMap).map(
+                            placeholder="Payment Record"
+                            options={Object.values(paymentRecordMap).map(
                                 (statusInfo) => ({
-                                    label: statusInfo.deliveryMethodDetailKey,
-                                    value: statusInfo.deliveryMethodDetailKey,
+                                    label: statusInfo.paymentRecordKey,
+                                    value: statusInfo.paymentRecordKey,
                                 })
                             )}
-                            onChange={handleDeliveryMethodDetailChange}
+                            onChange={handlePaymentRecordChange}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
                             }}
                         />
                     </FormItem>
-                </div>
-                <div className="col-span-1">
+
                     <FormItem
-                        label="Delivery Date"
+                        label="Payment Record Issuance Date"
                         invalid={
-                            (errors.deliveryDate &&
-                                touched.deliveryDate) as boolean
+                            (errors.paymentRecordIssuanceDate &&
+                                touched.paymentRecordIssuanceDate) as boolean
                         }
-                        errorMessage={errors.deliveryDate}
+                        errorMessage={errors.paymentRecordIssuanceDate}
                     >
                         <DatePicker
                             inputPrefix={
@@ -170,33 +220,126 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                             }
                             inputSuffix={null}
                             inputFormat="MMMM, DD YYYY"
-                            name="deliveryDate"
-                            placeholder="Delivery Date"
-                            value={deliveryDate}
-                            onChange={handleDeliveryDatePickerChange}
+                            name="paymentRecordIssuanceDate"
+                            placeholder="Payment Record Issuance Date"
+                            value={paymentRecordIssuanceDate}
+                            onChange={handlePaymentRecordIssuanceDateChange}
                         />
                     </FormItem>
+
                     <FormItem
-                        label="Delivery Region"
+                        label="Invoice Number"
                         invalid={
-                            (errors.deliveryRegion &&
-                                touched.deliveryRegion) as boolean
+                            (errors.paymentInvoiceNumber &&
+                                touched.paymentInvoiceNumber) as boolean
                         }
-                        errorMessage={errors.deliveryRegion}
+                        errorMessage={errors.paymentInvoiceNumber}
+                    >
+                        <Input
+                            placeholder="Invoice Number"
+                            onChange={handlePaymentInvoiceNumberChange}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Payment Status"
+                        invalid={
+                            (errors.paymentStatus &&
+                                touched.paymentStatus) as boolean
+                        }
+                        errorMessage={errors.paymentStatus}
                     >
                         <Select
-                            placeholder="Delivery Method"
-                            options={Object.values(deliveryRegionMap).map(
+                            placeholder="Payment Status"
+                            options={Object.values(paymentStatusMap).map(
                                 (statusInfo) => ({
-                                    label: statusInfo.deliveryRegionKey,
-                                    value: statusInfo.deliveryRegionKey,
+                                    label: statusInfo.paymentStatusKey,
+                                    value: statusInfo.paymentStatusKey,
                                 })
                             )}
-                            onChange={handleDeliveryRegionChange}
+                            onChange={handlePaymentStatusChange}
                             defaultValue={{
-                                label: 'Select',
-                                value: 'Select',
+                                label: 'Unpaid',
+                                value: 'Unpaid',
                             }}
+                        />
+                    </FormItem>
+                </div>
+                <div className="col-span-1">
+                    <FormItem
+                        label="Payment Received Date"
+                        invalid={
+                            (errors.paymentReceivedDate &&
+                                touched.paymentReceivedDate) as boolean
+                        }
+                        errorMessage={errors.paymentReceivedDate}
+                    >
+                        <DatePicker
+                            inputPrefix={
+                                <HiOutlineCalendar className="text-lg" />
+                            }
+                            inputSuffix={null}
+                            inputFormat="MMMM, DD YYYY"
+                            name="paymentReceivedDate"
+                            placeholder="Payment Received Date"
+                            value={paymentReceivedDate}
+                            onChange={handlePaymentReceivedDateChange}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Delivery Note Number"
+                        invalid={
+                            (errors.deliveryNoteNumber &&
+                                touched.deliveryNoteNumber) as boolean
+                        }
+                        errorMessage={errors.deliveryNoteNumber}
+                    >
+                        <Input
+                            placeholder="Delivery Note Number"
+                            onChange={handleDeliveryNoteNumberChange}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Delivery Note Issuance Date"
+                        invalid={
+                            (errors.deliveryNoteIssuanceDate &&
+                                touched.deliveryNoteIssuanceDate) as boolean
+                        }
+                        errorMessage={errors.deliveryNoteIssuanceDate}
+                    >
+                        <DatePicker
+                            inputPrefix={
+                                <HiOutlineCalendar className="text-lg" />
+                            }
+                            inputSuffix={null}
+                            inputFormat="MMMM, DD YYYY"
+                            name="deliveryNoteIssuanceDate"
+                            placeholder="Delivery Note Issuance Date"
+                            value={deliveryNoteIssuanceDate}
+                            onChange={handleDeliveryNoteIssuanceDateChange}
+                        />
+                    </FormItem>
+
+                    <FormItem
+                        label="Payment Reminder Sent Date"
+                        invalid={
+                            (errors.paymentReminderSentDate &&
+                                touched.paymentReminderSentDate) as boolean
+                        }
+                        errorMessage={errors.paymentReminderSentDate}
+                    >
+                        <DatePicker
+                            inputPrefix={
+                                <HiOutlineCalendar className="text-lg" />
+                            }
+                            inputSuffix={null}
+                            inputFormat="MMMM, DD YYYY"
+                            name="paymentReminderSentDate"
+                            placeholder="Payment Reminder Sent Date"
+                            value={paymentReminderSentDate}
+                            onChange={handlePaymentReminderSentDateChange}
                         />
                     </FormItem>
                 </div>
