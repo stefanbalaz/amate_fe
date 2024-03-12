@@ -44,17 +44,18 @@ const SignInForm = (props: SignInFormProps) => {
 
     const [showFetchingInfo, setShowFetchingInfo] = useState(false)
 
-    const onSignIn = async (
+    /*    const onSignIn = async (
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
         const { userName, password } = values
+        setSubmitting(true)
         let fetchingInfoTimeout = setTimeout(
             () => setShowFetchingInfo(true),
             1500
         )
 
-        /*         const result = await signIn({ userName, password })
+        const result = await signIn({ userName, password })
 
         if (result?.status === 'failed') {
             setMessage(result.message)
@@ -63,30 +64,152 @@ const SignInForm = (props: SignInFormProps) => {
         }
 
         setSubmitting(false)
-        setShowFetchingInfo(false) */
+        setShowFetchingInfo(false)
+    }
+ */
 
-        const signInAndRetry = async () => {
-            const result = await signIn({ userName, password })
+    /*     const onSignIn = async (
+        values: SignInFormSchema,
+        setSubmitting: (isSubmitting: boolean) => void
+    ) => {
+        const { userName, password } = values
+        setSubmitting(true)
 
-            if (result?.status === 'failed') {
-                setMessage(result.message)
+        // Counter for retry attempts
+        let retryCount = 0
+
+        // Function to handle the sign-in logic
+        const signInLogic = async () => {
+            // Set timeout for fetching info
+            let fetchingInfoTimeout = setTimeout(() => {
+                setShowFetchingInfo(true)
+            }, 1500)
+
+            try {
+                // Attempt to sign in
+                const result = await signIn({ userName, password })
+
+                if (result?.status === 'failed') {
+                    setMessage(result.message)
+                    console.log('Login failed')
+                }
+
+                if (result?.status === 'success') {
+                    // Assuming 'success' is the status for a successful sign-in
+                    console.log(
+                        `Login request attempt ${
+                            retryCount + 1
+                        } was successful.`
+                    ) // Log successful attempt
+                } else if (result?.status === 'failed') {
+                    setMessage(result.message)
+                }
+
+                // Clear the fetching info timeout
                 clearTimeout(fetchingInfoTimeout)
                 setShowFetchingInfo(false)
-            } else {
-                // Backend is activated, stop retrying
-                clearInterval(retryInterval)
-                setSubmitting(false)
-                setShowFetchingInfo(false)
+            } catch (error) {
+                // Handle timeout error
+                if (error.message && error.message.includes('exceeded')) {
+                    // Retry logic
+                    if (retryCount < 2) {
+                        retryCount++
+                        console.log(`Retry attempt ${retryCount}`)
+                        await signInLogic() // Retry the sign-in logic
+                    } else {
+                        console.error('Maximum retry attempts reached.')
+                        setMessage('Sign-in failed. Please try again later.')
+                        setShowFetchingInfo(false)
+                    }
+                } else {
+                    // Handle other types of errors
+                    console.log('Error during sign-in:', error.message)
+                    console.error('Error during sign-in:', error.message)
+                    setMessage('Sign-in failed. Please try again later.')
+                    setShowFetchingInfo(false)
+                }
             }
         }
 
-        // Initial sign-in attempt
-        await signInAndRetry()
+        // Call the sign-in logic
+        await signInLogic()
 
-        // Retry every 5 seconds until backend is activated
-        const retryInterval = setInterval(async () => {
-            await signInAndRetry()
-        }, 5000)
+        // Complete the submission
+        setSubmitting(false)
+    } */
+
+    const onSignIn = async (
+        values: SignInFormSchema,
+        setSubmitting: (isSubmitting: boolean) => void
+    ) => {
+        const { userName, password } = values
+        setSubmitting(true)
+
+        // Counter for retry attempts
+        let retryCount = 0
+
+        // Function to handle the sign-in logic
+        const signInLogic = async () => {
+            // Set timeout for fetching info
+            let fetchingInfoTimeout = setTimeout(() => {
+                console.log('Fetching info timeout reached.')
+                setShowFetchingInfo(true)
+            }, 1500)
+
+            try {
+                console.log('Attempting to sign in...')
+                // Attempt to sign in
+                const result = await signIn({ userName, password })
+
+                if (result?.status === 'failed') {
+                    setMessage(result.message)
+                    console.log('Login failed:', result.message)
+                }
+
+                if (result?.status === 'success') {
+                    // Assuming 'success' is the status for a successful sign-in
+                    console.log(
+                        `Login request attempt ${
+                            retryCount + 1
+                        } was successful.`
+                    ) // Log successful attempt
+                } else if (result?.status === 'failed') {
+                    setMessage(result.message)
+                }
+
+                // Clear the fetching info timeout
+                clearTimeout(fetchingInfoTimeout)
+                setShowFetchingInfo(false)
+            } catch (error) {
+                // Handle timeout error
+                if (error.message && error.message.includes('exceeded')) {
+                    // Retry logic
+                    if (retryCount < 2) {
+                        retryCount++
+                        console.log(`Retry attempt ${retryCount}`)
+                        await signInLogic() // Retry the sign-in logic
+                    } else {
+                        console.error('Maximum retry attempts reached.')
+                        setMessage('Sign-in failed. Please try again later.')
+                        setShowFetchingInfo(false)
+                    }
+                } else {
+                    // Handle other types of errors
+                    console.log('Error during sign-in:', error.message)
+                    console.error('Error during sign-in:', error.message)
+                    setMessage('Sign-in failed. Please try again later.')
+                    setShowFetchingInfo(false)
+                }
+            }
+        }
+
+        // Call the sign-in logic
+        console.log('Initiating sign-in logic...')
+        await signInLogic()
+
+        // Complete the submission
+        console.log('Sign-in logic completed.')
+        setSubmitting(false)
     }
 
     return (
