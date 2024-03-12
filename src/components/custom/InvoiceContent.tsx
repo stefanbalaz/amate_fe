@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom'
 import { fetchOrderWithPartnerMerchant } from '@/services/OrderService'
 import { deliveryAddressPartnerOrderNumberPartnerMerchantID } from '@/configs/invoice/invoicePartnerConfig'
 import Input from '@/components/ui/Input'
+import { PriceAmount } from '@/configs/custom/units'
 
 type Invoice = {
     id: string
@@ -61,7 +62,7 @@ function DebouncedInput({
     }, [value])
 
     return (
-        <div className="flex items-center">
+        /*         <div className="flex items-center">
             <h3>
                 <span style={{ whiteSpace: 'nowrap' }}>Invoice #</span>
             </h3>
@@ -73,6 +74,25 @@ function DebouncedInput({
                     className="p-2 font-lg shadow border border-block"
                 />
             </h3>
+        </div> */
+        <div className="flex flex-col items-center lg:flex-row">
+            {/* First row */}
+
+            <h3>
+                <span style={{ whiteSpace: 'nowrap' }}>Invoice #</span>
+            </h3>
+
+            {/* Second row */}
+            <div>
+                <h3>
+                    <Input
+                        {...props}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        className="p-2 font-lg shadow border border-block"
+                    />
+                </h3>
+            </div>
         </div>
     )
 }
@@ -189,28 +209,21 @@ const InvoiceContent = () => {
             <div id="pdf-content">
                 {!isEmpty(data) && (
                     <>
-                        {/*      <div
-                            className="grid grid-cols-3 gap-x-4"
-                            style={{ rowGap: '40px', marginBottom: '40px' }}
-                        > */}
                         <div
                             className="grid grid-cols-3 gap-x-4"
-                            style={{
-                                rowGap: '40px',
-                                marginBottom: '40px',
-                                whiteSpace: 'nowrap',
-                            }}
+                            style={{ rowGap: '40px', marginBottom: '40px' }}
                         >
                             {/* Row 1 Column 1 - Logo */}
-                            <div className="col-span-1 row-span-1">
+                            {/* ORIGINAL:  <div className="col-span-1 row-span-1"></div> */}
+                            <div className="col-span-1 sm:col-span-1">
                                 <Logo className="mb-3" mode={mode} />
                             </div>
 
                             {/* Row 1 Column 2 - Empty */}
-                            <div className="col-span-1 row-span-1"></div>
+                            <div className="col-span-1 sm:col-span-1"></div>
 
                             {/* Row 1 Column 3 - Invoice Number, Order Creation Date */}
-                            <div className="col-span-1 row-span-1">
+                            <div className="col-span-1 sm:col-span-1">
                                 <div className="my-4">
                                     {/* Invoice Number and Order Creation Date rendering */}
                                     <div className="mb-2">
@@ -238,8 +251,9 @@ const InvoiceContent = () => {
                             </div>
 
                             {/* Row 2 Column 1 - Merchant Data */}
+
                             <div
-                                className="col-span-1 row-span-1 "
+                                className="col-span-1 sm:col-span-1"
                                 style={{ marginTop: '-40px' }}
                             >
                                 <address className="not-italic">
@@ -330,7 +344,7 @@ const InvoiceContent = () => {
                                 data?.orderPartner.ID
                             ) ? (
                                 <div
-                                    className="col-span-1 row-span-1"
+                                    className="col-span-1 sm:col-span-1"
                                     style={{ marginTop: '-40px' }}
                                 >
                                     {/* Order Partner Delivery Address rendering */}
@@ -410,7 +424,7 @@ const InvoiceContent = () => {
 
                             {/* Row 2 Column 3 - OrderPartner Data */}
                             <div
-                                className="col-span-1 row-span-1"
+                                className="col-span-1 sm:col-span-1"
                                 style={{ marginTop: '-40px' }}
                             >
                                 <address className="not-italic">
@@ -513,7 +527,7 @@ const InvoiceContent = () => {
 
                             {/* Row 3 Column 1 - Empty */}
 
-                            <div className="col-span-1 row-span-1">
+                            <div className="col-span-1 sm:col-span-1">
                                 Issued by:{' '}
                                 {
                                     data?.orderMerchant.selectedMerchantData
@@ -540,8 +554,23 @@ const InvoiceContent = () => {
                                         ?.merchantRegistration.web
                                 }
                                 <br />
-                                IBAN:{' '}
-                                {data?.orderMerchant.selectedMerchantData?.IBAN}
+                                {/*   IBAN:{' '}
+                                {data?.orderMerchant.selectedMerchantData?.IBAN} */}
+                                <div>
+                                    <span className="iban-label">IBAN: </span>
+                                    <div className="iban-code">
+                                        {data?.orderMerchant
+                                            .selectedMerchantData?.IBAN &&
+                                            data.orderMerchant.selectedMerchantData.IBAN.match(
+                                                /.{1,4}/g
+                                            ) // Split IBAN into groups of 4 characters
+                                                .map((group, index) => (
+                                                    <span key={index}>
+                                                        {group}
+                                                    </span>
+                                                ))}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Row 3 Column 2 - Empty */}
@@ -557,10 +586,7 @@ const InvoiceContent = () => {
                                 {data?.orderPayment?.invoiceNumber}
                             </div> */}
 
-                            <div
-                                className="col-span-1 row-span-1"
-                                style={{ whiteSpace: 'nowrap' }}
-                            >
+                            <div className="col-span-1 sm:col-span-1">
                                 Order creation date: {data?.orderCreationDate}{' '}
                                 <br />
                                 Delivery method:{' '}
@@ -576,7 +602,7 @@ const InvoiceContent = () => {
 
                             {/* Row 3 Column 3 - Empty */}
 
-                            <div className="col-span-1 row-span-1">
+                            <div className="col-span-1 sm:col-span-1">
                                 Invoice issuance date:{' '}
                                 {data?.orderPayment.recordIssuanceDate} <br />
                                 Payment due date: {data?.orderPayment.dueDate}
@@ -587,7 +613,8 @@ const InvoiceContent = () => {
                                         ?.props?.children
                                 }{' '}
                                 <br />
-                                Total due: {totalPriceFromChild}€
+                                Total due:{' '}
+                                <PriceAmount amount={totalPriceFromChild} />
                             </div>
                         </div>
                         <ContentTable

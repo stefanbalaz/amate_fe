@@ -50,3 +50,14 @@
     width: 100%;
     max-width: 100%;
 }
+
+/* SPLITTING IBAN CODE ON INVOICE ON SMALL DEVICES */
+
+.iban-code {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.iban-code span {
+    margin-right: 5px;
+}
