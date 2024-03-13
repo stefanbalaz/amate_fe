@@ -89,7 +89,7 @@ function DebouncedInput({
                         {...props}
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
-                        className="p-2 font-lg shadow border border-block"
+                        className="invoice-invoicenumber-input p-1 font-lg shadow border border-block"
                     />
                 </h3>
             </div>
