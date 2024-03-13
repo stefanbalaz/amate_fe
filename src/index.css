@@ -61,3 +61,11 @@
 .iban-code span {
     margin-right: 5px;
 }
+
+/* INVOICE INVOICE-NUMBER INPUT-FIELD */
+
+@media (max-width: 500px) {
+    .invoice-invoicenumber-input {
+        font-size: 1rem;
+    }
+}
