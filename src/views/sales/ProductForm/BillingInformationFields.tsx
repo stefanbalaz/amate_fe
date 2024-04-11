@@ -55,12 +55,13 @@ type BillingInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const { Addon } = InputGroup
 
 const BillingInformationFields = (props: BillingInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, onFieldChange } = props
 
     const [paymentMethod, setPaymentMethod] = useState<string | null>('Select')
     const [paymentRecord, setPaymentRecord] = useState<string | null>('Select')
@@ -86,14 +87,14 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setPaymentMethod(selectedPaymentMethod)
     }
 
-    console.log('deliveryMethod', paymentMethod)
+    //  console.log('deliveryMethod', paymentMethod)
 
     const handlePaymentRecordChange = (selectedOption: any) => {
         const selectedPaymentRecord = selectedOption.value
         setPaymentRecord(selectedPaymentRecord)
     }
 
-    console.log('paymentRecord', paymentRecord)
+    //  console.log('paymentRecord', paymentRecord)
 
     /*    const handlePaymentInvoiceNumberChange = (paymentInvoiceNumber: any) => {
         setPaymentInvoiceNumber(paymentInvoiceNumber)
@@ -104,7 +105,7 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setPaymentInvoiceNumber(insertedValue)
     }
 
-    console.log('paymentInvoiceNumber', paymentInvoiceNumber)
+    //  console.log('paymentInvoiceNumber', paymentInvoiceNumber)
 
     const handlePaymentRecordIssuanceDateChange = (
         paymentRecordIssuanceDate: Date | null
@@ -112,14 +113,14 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setPaymentRecordIssuanceDate(paymentRecordIssuanceDate)
     }
 
-    console.log('paymentRecordIssuanceDate', paymentRecordIssuanceDate)
+    //  console.log('paymentRecordIssuanceDate', paymentRecordIssuanceDate)
 
     const handleDeliveryNoteNumberChange = (e) => {
         const insertedValue = e.target.value
         setDeliveryNoteNumber(insertedValue)
     }
 
-    console.log('deliveryNoteNumber', deliveryNoteNumber)
+    //  console.log('deliveryNoteNumber', deliveryNoteNumber)
 
     const handleDeliveryNoteIssuanceDateChange = (
         deliveryNoteIssuanceDate: Date | null
@@ -127,7 +128,7 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setDeliveryNoteIssuanceDate(deliveryNoteIssuanceDate)
     }
 
-    console.log('deliveryNoteIssuanceDate', deliveryNoteIssuanceDate)
+    //  console.log('deliveryNoteIssuanceDate', deliveryNoteIssuanceDate)
 
     const handlePaymentReceivedDateChange = (
         paymentReceivedDate: Date | null
@@ -135,14 +136,14 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setPaymentReceivedDate(paymentReceivedDate)
     }
 
-    console.log('paymentReceivedDate', paymentReceivedDate)
+    //  console.log('paymentReceivedDate', paymentReceivedDate)
 
     const handlePaymentStatusChange = (selectedOption: any) => {
         const selectedPaymentStatus = selectedOption.value
         setPaymentStatus(selectedPaymentStatus)
     }
 
-    console.log('paymentStatus', paymentStatus)
+    //  console.log('paymentStatus', paymentStatus)
 
     const handlePaymentReminderSentDateChange = (
         paymentReminderSentDate: Date | null
@@ -150,7 +151,11 @@ const BillingInformationFields = (props: BillingInformationFields) => {
         setPaymentReminderSentDate(paymentReminderSentDate)
     }
 
-    console.log('paymentReminderSentDate', paymentReminderSentDate)
+    //   console.log('paymentReminderSentDate', paymentReminderSentDate)
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -169,13 +174,28 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                     >
                         <Select
                             placeholder="Payment Method"
-                            options={Object.values(paymentMethodMap).map(
+                            /*   options={Object.values(paymentMethodMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.paymentMethodKey,
                                     value: statusInfo.paymentMethodKey,
                                 })
                             )}
-                            onChange={handlePaymentMethodChange}
+                            onChange={handlePaymentMethodChange} */
+
+                            options={Object.keys(paymentMethodMap).map(
+                                (key) => ({
+                                    label: paymentMethodMap[key]
+                                        .paymentMethodKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('paymentMethod', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
@@ -192,13 +212,28 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                     >
                         <Select
                             placeholder="Payment Record"
-                            options={Object.values(paymentRecordMap).map(
+                            /*  options={Object.values(paymentRecordMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.paymentRecordKey,
                                     value: statusInfo.paymentRecordKey,
                                 })
                             )}
-                            onChange={handlePaymentRecordChange}
+                            onChange={handlePaymentRecordChange} */
+
+                            options={Object.keys(paymentRecordMap).map(
+                                (key) => ({
+                                    label: paymentRecordMap[key]
+                                        .paymentRecordKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('paymentRecord', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
@@ -223,7 +258,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                             name="paymentRecordIssuanceDate"
                             placeholder="Payment Record Issuance Date"
                             value={paymentRecordIssuanceDate}
-                            onChange={handlePaymentRecordIssuanceDateChange}
+                            // onChange={handlePaymentRecordIssuanceDateChange}
+                            onChange={(paymentRecordIssuanceDate) =>
+                                handleFieldChange(
+                                    'paymentRecordIssuanceDate',
+                                    paymentRecordIssuanceDate
+                                )
+                            }
                         />
                     </FormItem>
 
@@ -237,7 +278,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                     >
                         <Input
                             placeholder="Invoice Number"
-                            onChange={handlePaymentInvoiceNumberChange}
+                            // onChange={handlePaymentInvoiceNumberChange}
+                            onChange={(e) =>
+                                handleFieldChange(
+                                    'paymentInvoiceNumber',
+                                    e.target.value
+                                )
+                            }
                         />
                     </FormItem>
 
@@ -251,13 +298,28 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                     >
                         <Select
                             placeholder="Payment Status"
-                            options={Object.values(paymentStatusMap).map(
+                            /*   options={Object.values(paymentStatusMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.paymentStatusKey,
                                     value: statusInfo.paymentStatusKey,
                                 })
                             )}
-                            onChange={handlePaymentStatusChange}
+                            onChange={handlePaymentStatusChange} */
+
+                            options={Object.keys(paymentStatusMap).map(
+                                (key) => ({
+                                    label: paymentStatusMap[key]
+                                        .paymentStatusKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('paymentStatus', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Unpaid',
                                 value: 'Unpaid',
@@ -283,7 +345,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                             name="paymentReceivedDate"
                             placeholder="Payment Received Date"
                             value={paymentReceivedDate}
-                            onChange={handlePaymentReceivedDateChange}
+                            // onChange={handlePaymentReceivedDateChange}
+                            onChange={(paymentReceivedDate) =>
+                                handleFieldChange(
+                                    'paymentReceivedDate',
+                                    paymentReceivedDate
+                                )
+                            }
                         />
                     </FormItem>
 
@@ -297,7 +365,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                     >
                         <Input
                             placeholder="Delivery Note Number"
-                            onChange={handleDeliveryNoteNumberChange}
+                            //  onChange={handleDeliveryNoteNumberChange}
+                            onChange={(e) =>
+                                handleFieldChange(
+                                    'deliveryNoteNumber',
+                                    e.target.value
+                                )
+                            }
                         />
                     </FormItem>
 
@@ -318,7 +392,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                             name="deliveryNoteIssuanceDate"
                             placeholder="Delivery Note Issuance Date"
                             value={deliveryNoteIssuanceDate}
-                            onChange={handleDeliveryNoteIssuanceDateChange}
+                            //  onChange={handleDeliveryNoteIssuanceDateChange}
+                            onChange={(deliveryNoteIssuanceDate) =>
+                                handleFieldChange(
+                                    'deliveryNoteIssuanceDate',
+                                    deliveryNoteIssuanceDate
+                                )
+                            }
                         />
                     </FormItem>
 
@@ -339,7 +419,13 @@ const BillingInformationFields = (props: BillingInformationFields) => {
                             name="paymentReminderSentDate"
                             placeholder="Payment Reminder Sent Date"
                             value={paymentReminderSentDate}
-                            onChange={handlePaymentReminderSentDateChange}
+                            //  onChange={handlePaymentReminderSentDateChange}
+                            onChange={(paymentReminderSentDate) =>
+                                handleFieldChange(
+                                    'paymentReminderSentDate',
+                                    paymentReminderSentDate
+                                )
+                            }
                         />
                     </FormItem>
                 </div>

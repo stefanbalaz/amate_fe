@@ -37,10 +37,11 @@ type AdditionalInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const AdditionalInformationFields = (props: AdditionalInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, onFieldChange } = props
 
     const [note, setNote] = useState<String | null>('')
 
@@ -49,7 +50,11 @@ const AdditionalInformationFields = (props: AdditionalInformationFields) => {
         setNote(insertedValue)
     }
 
-    console.log('Note', note)
+    // console.log('Note', note)
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -64,7 +69,10 @@ const AdditionalInformationFields = (props: AdditionalInformationFields) => {
                 >
                     <Input
                         placeholder="Note"
-                        onChange={handleNoteChange}
+                        // onChange={handleNoteChange}
+                        onChange={(e) =>
+                            handleFieldChange('note', e.target.value)
+                        }
                         textArea
                     />
                 </FormItem>

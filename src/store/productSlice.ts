@@ -2,19 +2,19 @@ import { createSlice } from '@reduxjs/toolkit'
 
 interface ProductState {
     // Define your state properties here
-    classic: number
-    melon: number
-    mint: number
-    hemp: number
-    ginger: number
+    orderProductClassic: number
+    orderProductMelon: number
+    orderProductMint: number
+    orderProductHemp: number
+    orderProductGinger: number
 }
 
 const initialState: ProductState = {
-    classic: 0,
-    melon: 0,
-    mint: 0,
-    hemp: 0,
-    ginger: 0,
+    orderProductClassic: 0,
+    orderProductMelon: 0,
+    orderProductMint: 0,
+    orderProductHemp: 0,
+    orderProductGinger: 0,
 }
 
 const productSlice = createSlice({

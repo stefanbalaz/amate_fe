@@ -53,12 +53,13 @@ type PackagingInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const { Addon } = InputGroup
 
 const PackagingInformationFields = (props: PackagingInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, onFieldChange } = props
 
     const [productVolume, setProductVolume] = useState<number | null>(0.33)
 
@@ -90,7 +91,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
     const [allProductsTotal, setAllProductsTotal] = useState<number>(0)
 
     const productAmounts = useAppSelector((state) => state.product)
-    console.log('productAmountsPackaging', productAmounts)
+
+    //    console.log('productAmountsPackaging', productAmounts)
 
     useEffect(() => {
         const calculateAllProductsTotal = () => {
@@ -112,7 +114,7 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
         calculateAllProductsTotal()
     }, [productAmounts])
 
-    console.log('allProductsTotal', allProductsTotal)
+    //   console.log('allProductsTotal', allProductsTotal)
 
     useEffect(() => {
         const calculateTransportMediumAmount = () => {
@@ -123,15 +125,6 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                 dynamicTransportMediumAmountCalculation
             )
 
-            console.log(
-                'dynamicTransportMediumAmountCalculation',
-                dynamicTransportMediumAmountCalculation
-            )
-
-            console.log(
-                'dynamicTransportMediumAmountCalculationRounded',
-                roundedAmount
-            )
             setTransportMediumIssuanceAmount(roundedAmount)
         }
 
@@ -139,47 +132,21 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
     }, [allProductsTotal, transportMedium, unitsPerTransportMedium])
 
     const onClickHandler = (
-        setOrderPackaging: React.Dispatch<React.SetStateAction<number>>,
+        setFieldAmount: React.Dispatch<React.SetStateAction<number>>,
         amount: number,
+        fieldName: string,
+        fieldValue: number, // Value of the field
         e: React.MouseEvent<HTMLButtonElement>
     ) => {
         e.preventDefault()
-        setOrderPackaging((prevValue) => Math.max(prevValue + amount, 0))
+        const newValue = Math.max(fieldValue + amount, 0)
+        setFieldAmount(newValue)
+        handleFieldChange(fieldName, newValue)
     }
 
-    console.log('transportMediumIssuanceAmount', transportMediumIssuanceAmount)
-    console.log('palletIssuanceAmount', palletIssuanceAmount)
-    console.log('containerMediumReceiptAmount', containerMediumReceiptAmount)
-    console.log('transportMediumReceiptAmount', transportMediumReceiptAmount)
-    console.log('palletReceiptAmount', palletReceiptAmount)
-
-    const handleProductVolumeChange = (selectedOption: any) => {
-        const selectedProductVolume = selectedOption.value
-        setProductVolume(selectedProductVolume)
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
     }
-
-    console.log('productVolume', productVolume)
-
-    const handleTransportMediumChange = (selectedOption: any) => {
-        const selectedTransportMedium = selectedOption.value
-        setTransportMedium(selectedTransportMedium)
-    }
-
-    console.log('transportMedium', transportMedium)
-
-    const handleContainerMediumChange = (selectedOption: any) => {
-        const selectedContainerMedium = selectedOption.value
-        setContainerMedium(selectedContainerMedium)
-    }
-
-    console.log('containerMedium', containerMedium)
-
-    const handleUnitsPerTransportMediumChange = (selectedOption: any) => {
-        const selectedUnitsPerTransportMedium = selectedOption.value
-        setUnitsPerTransportMedium(selectedUnitsPerTransportMedium)
-    }
-
-    console.log('unitsPerTransportMedium', unitsPerTransportMedium)
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -200,13 +167,20 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             <Select
                                 className="input-group-unit"
                                 placeholder="Product Volume"
-                                options={Object.values(productVolumeMap).map(
-                                    (statusInfo) => ({
-                                        label: statusInfo.productVolumeKey,
-                                        value: statusInfo.productVolumeKey,
+                                options={Object.keys(productVolumeMap).map(
+                                    (key) => ({
+                                        label: productVolumeMap[key]
+                                            .productVolumeKey,
+                                        value: key,
                                     })
                                 )}
-                                onChange={handleProductVolumeChange}
+                                onChange={(selectedOption) => {
+                                    const { value, label } = selectedOption
+                                    handleFieldChange('productVolume', {
+                                        value,
+                                        label,
+                                    })
+                                }}
                                 defaultValue={{
                                     label: '0.33',
                                     value: '0.33',
@@ -224,13 +198,20 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                     >
                         <Select
                             placeholder="Transport Medium"
-                            options={Object.values(transportMediumMap).map(
-                                (statusInfo) => ({
-                                    label: statusInfo.transportMediumKey,
-                                    value: statusInfo.transportMediumKey,
+                            options={Object.keys(transportMediumMap).map(
+                                (key) => ({
+                                    label: transportMediumMap[key]
+                                        .transportMediumKey,
+                                    value: key,
                                 })
                             )}
-                            onChange={handleTransportMediumChange}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('transportMedium', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Crate',
                                 value: 'Crate',
@@ -249,13 +230,20 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                     >
                         <Select
                             placeholder="Container Medium"
-                            options={Object.values(containerMediumMap).map(
-                                (statusInfo) => ({
-                                    label: statusInfo.containerMediumKey,
-                                    value: statusInfo.containerMediumKey,
+                            options={Object.keys(containerMediumMap).map(
+                                (key) => ({
+                                    label: containerMediumMap[key]
+                                        .containerMediumKey,
+                                    value: key,
                                 })
                             )}
-                            onChange={handleContainerMediumChange}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('containerMedium', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Glass',
                                 value: 'Plastic',
@@ -272,13 +260,20 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                     >
                         <Select
                             placeholder="Units Per Transport Medium"
-                            options={Object.values(
+                            options={Object.keys(
                                 unitsPerTransportMediumMap
-                            ).map((statusInfo) => ({
-                                label: statusInfo.unitsPerTransportMediumKey,
-                                value: statusInfo.unitsPerTransportMediumKey,
+                            ).map((key) => ({
+                                label: unitsPerTransportMediumMap[key]
+                                    .unitsPerTransportMediumKey,
+                                value: key,
                             }))}
-                            onChange={handleUnitsPerTransportMediumChange}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('unitsPerTransportMedium', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: '20',
                                 value: '20',
@@ -306,6 +301,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setContainerMediumReceiptAmount,
                                     -10,
+                                    'containerMediumReceiptAmount',
+                                    containerMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -319,6 +316,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setContainerMediumReceiptAmount,
                                     -1,
+                                    'containerMediumReceiptAmount',
+                                    containerMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -331,11 +330,20 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             style={{ textAlign: 'center' }}
                             placeholder="0"
                             value={containerMediumReceiptAmount}
-                            onChange={(e) =>
+                            /*  onChange={(e) =>
                                 setContainerMediumReceiptAmount(
                                     Number(e.target.value)
                                 )
-                            }
+                            } */
+                            onChange={(e) => {
+                                handleFieldChange(
+                                    'containerMediumReceiptAmount',
+                                    Number(e.target.value)
+                                )
+                                setContainerMediumReceiptAmount(
+                                    Number(e.target.value)
+                                )
+                            }}
                         />
 
                         <Button
@@ -344,6 +352,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setContainerMediumReceiptAmount,
                                     1,
+                                    'containerMediumReceiptAmount',
+                                    containerMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -358,6 +368,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setContainerMediumReceiptAmount,
                                     10,
+                                    'containerMediumReceiptAmount',
+                                    containerMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -386,6 +398,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumIssuanceAmount,
                                     -10,
+                                    'transportMediumIssuanceAmount',
+                                    transportMediumIssuanceAmount,
                                     e
                                 )
                             }
@@ -401,6 +415,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumIssuanceAmount,
                                     -1,
+                                    'transportMediumIssuanceAmount',
+                                    transportMediumIssuanceAmount,
                                     e
                                 )
                             }
@@ -413,11 +429,15 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             style={{ textAlign: 'center' }}
                             placeholder="0"
                             value={transportMediumIssuanceAmount}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                                handleFieldChange(
+                                    'transportMediumIssuanceAmount',
+                                    Number(e.target.value)
+                                )
                                 setTransportMediumIssuanceAmount(
                                     Number(e.target.value)
                                 )
-                            }
+                            }}
                         />
 
                         <Button
@@ -428,6 +448,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumIssuanceAmount,
                                     1,
+                                    'transportMediumIssuanceAmount',
+                                    transportMediumIssuanceAmount,
                                     e
                                 )
                             }
@@ -443,6 +465,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumIssuanceAmount,
                                     10,
+                                    'transportMediumIssuanceAmount',
+                                    transportMediumIssuanceAmount,
                                     e
                                 )
                             }
@@ -470,6 +494,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumReceiptAmount,
                                     -10,
+                                    'transportMediumReceiptAmount',
+                                    transportMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -483,6 +509,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumReceiptAmount,
                                     -1,
+                                    'transportMediumReceiptAmount',
+                                    transportMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -495,11 +523,15 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             style={{ textAlign: 'center' }}
                             placeholder="0"
                             value={transportMediumReceiptAmount}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                                handleFieldChange(
+                                    'transportMediumReceiptAmount',
+                                    Number(e.target.value)
+                                )
                                 setTransportMediumReceiptAmount(
                                     Number(e.target.value)
                                 )
-                            }
+                            }}
                         />
 
                         <Button
@@ -508,6 +540,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumReceiptAmount,
                                     1,
+                                    'transportMediumReceiptAmount',
+                                    transportMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -522,6 +556,8 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                 onClickHandler(
                                     setTransportMediumReceiptAmount,
                                     10,
+                                    'transportMediumReceiptAmount',
+                                    transportMediumReceiptAmount,
                                     e
                                 )
                             }
@@ -546,7 +582,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             className="custom-group-button"
                             variant="twoTone"
                             onClick={(e) =>
-                                onClickHandler(setPalletIssuanceAmount, -10, e)
+                                onClickHandler(
+                                    setPalletIssuanceAmount,
+                                    -10,
+                                    'palletIssuanceAmount',
+                                    palletIssuanceAmount,
+                                    e
+                                )
                             }
                         >
                             - 10
@@ -555,7 +597,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                         <Button
                             className="custom-group-button"
                             onClick={(e) =>
-                                onClickHandler(setPalletIssuanceAmount, -1, e)
+                                onClickHandler(
+                                    setPalletIssuanceAmount,
+                                    -1,
+                                    'palletIssuanceAmount',
+                                    palletIssuanceAmount,
+                                    e
+                                )
                             }
                         >
                             - 1
@@ -566,15 +614,25 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             style={{ textAlign: 'center' }}
                             placeholder="0"
                             value={palletIssuanceAmount}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                                handleFieldChange(
+                                    'palletIssuanceAmount',
+                                    Number(e.target.value)
+                                )
                                 setPalletIssuanceAmount(Number(e.target.value))
-                            }
+                            }}
                         />
 
                         <Button
                             className="custom-group-button"
                             onClick={(e) =>
-                                onClickHandler(setPalletIssuanceAmount, 1, e)
+                                onClickHandler(
+                                    setPalletIssuanceAmount,
+                                    1,
+                                    'palletIssuanceAmount',
+                                    palletIssuanceAmount,
+                                    e
+                                )
                             }
                         >
                             + 1
@@ -584,7 +642,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             className="custom-group-button"
                             variant="twoTone"
                             onClick={(e) =>
-                                onClickHandler(setPalletIssuanceAmount, 10, e)
+                                onClickHandler(
+                                    setPalletIssuanceAmount,
+                                    10,
+                                    'palletIssuanceAmount',
+                                    palletIssuanceAmount,
+                                    e
+                                )
                             }
                         >
                             + 10
@@ -607,7 +671,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             className="custom-group-button"
                             variant="twoTone"
                             onClick={(e) =>
-                                onClickHandler(setPalletReceiptAmount, -10, e)
+                                onClickHandler(
+                                    setPalletReceiptAmount,
+                                    -10,
+                                    'palletReceiptAmount',
+                                    palletReceiptAmount,
+                                    e
+                                )
                             }
                         >
                             - 10
@@ -616,7 +686,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                         <Button
                             className="custom-group-button"
                             onClick={(e) =>
-                                onClickHandler(setPalletReceiptAmount, -1, e)
+                                onClickHandler(
+                                    setPalletReceiptAmount,
+                                    -1,
+                                    'palletReceiptAmount',
+                                    palletReceiptAmount,
+                                    e
+                                )
                             }
                         >
                             - 1
@@ -627,15 +703,25 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             style={{ textAlign: 'center' }}
                             placeholder="0"
                             value={palletReceiptAmount}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                                handleFieldChange(
+                                    'palletReceiptAmount',
+                                    Number(e.target.value)
+                                )
                                 setPalletReceiptAmount(Number(e.target.value))
-                            }
+                            }}
                         />
 
                         <Button
                             className="custom-group-button"
                             onClick={(e) =>
-                                onClickHandler(setPalletReceiptAmount, 1, e)
+                                onClickHandler(
+                                    setPalletReceiptAmount,
+                                    1,
+                                    'palletReceiptAmount',
+                                    palletReceiptAmount,
+                                    e
+                                )
                             }
                         >
                             + 1
@@ -645,7 +731,13 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                             className="custom-group-button"
                             variant="twoTone"
                             onClick={(e) =>
-                                onClickHandler(setPalletReceiptAmount, 10, e)
+                                onClickHandler(
+                                    setPalletReceiptAmount,
+                                    10,
+                                    'palletReceiptAmount',
+                                    palletReceiptAmount,
+                                    e
+                                )
                             }
                         >
                             + 10

@@ -52,12 +52,13 @@ type DeliveryInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const { Addon } = InputGroup
 
 const DeliveryInformationFields = (props: DeliveryInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, onFieldChange } = props
 
     const [deliveryMethod, setDeliveryMethod] = useState<string | null>(
         'Select'
@@ -78,28 +79,32 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
         setDeliveryMethod(selectedDeliveryMethod)
     }
 
-    console.log('deliveryMethod', deliveryMethod)
+    //  console.log('deliveryMethod', deliveryMethod)
 
     const handleDeliveryMethodDetailChange = (selectedOption: any) => {
         const selectedDeliveryMethodDetail = selectedOption.value
         setDeliveryMethodDetail(selectedDeliveryMethodDetail)
     }
 
-    console.log('deliveryMethodDetail', deliveryMethodDetail)
+    //  console.log('deliveryMethodDetail', deliveryMethodDetail)
 
     const handleDeliveryDatePickerChange = (deliveryDate: Date | null) => {
         console.log('Selected delivery date', deliveryDate)
         setDeliveryDate(deliveryDate)
     }
 
-    console.log('deliveryDate', deliveryDate)
+    //  console.log('deliveryDate', deliveryDate)
 
     const handleDeliveryRegionChange = (selectedOption: any) => {
         const selectedDeliveryRegion = selectedOption.value
         setDeliveryRegion(selectedDeliveryRegion)
     }
 
-    console.log('deliveryRegion', deliveryRegion)
+    //  console.log('deliveryRegion', deliveryRegion)
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -118,13 +123,33 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
                     >
                         <Select
                             placeholder="Delivery Method"
-                            options={Object.values(deliveryMethodMap).map(
+                            /*   options={Object.values(deliveryMethodMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.deliveryMethodKey,
                                     value: statusInfo.deliveryMethodKey,
                                 })
                             )}
-                            onChange={handleDeliveryMethodChange}
+                            //  onChange={handleDeliveryMethodChange}
+                            onChange={(selectedOption) =>
+                                handleFieldChange('deliveryMethod', {
+                                    value: selectedOption.value,
+                                    label: selectedOption.deliveryMethodKey,
+                                })
+                            } */
+                            options={Object.keys(deliveryMethodMap).map(
+                                (key) => ({
+                                    label: deliveryMethodMap[key]
+                                        .deliveryMethodKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('deliveryMethod', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
@@ -140,14 +165,30 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
                         errorMessage={errors.deliveryMethodDetail}
                     >
                         <Select
-                            placeholder="Delivery Method"
-                            options={Object.values(deliveryMethodDetailMap).map(
+                            placeholder="Delivery Method Detail"
+                            /*   options={Object.values(deliveryMethodDetailMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.deliveryMethodDetailKey,
                                     value: statusInfo.deliveryMethodDetailKey,
                                 })
                             )}
                             onChange={handleDeliveryMethodDetailChange}
+ */
+
+                            options={Object.keys(deliveryMethodDetailMap).map(
+                                (key) => ({
+                                    label: deliveryMethodDetailMap[key]
+                                        .deliveryMethodDetailKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('deliveryMethodDetail', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',
@@ -173,7 +214,10 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
                             name="deliveryDate"
                             placeholder="Delivery Date"
                             value={deliveryDate}
-                            onChange={handleDeliveryDatePickerChange}
+                            // onChange={handleDeliveryDatePickerChange}
+                            onChange={(deliveryDate) =>
+                                handleFieldChange('deliveryDate', deliveryDate)
+                            }
                         />
                     </FormItem>
                     <FormItem
@@ -185,14 +229,28 @@ const DeliveryInformationFields = (props: DeliveryInformationFields) => {
                         errorMessage={errors.deliveryRegion}
                     >
                         <Select
-                            placeholder="Delivery Method"
-                            options={Object.values(deliveryRegionMap).map(
+                            placeholder="Delivery Region"
+                            /* options={Object.values(deliveryRegionMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.deliveryRegionKey,
                                     value: statusInfo.deliveryRegionKey,
                                 })
                             )}
-                            onChange={handleDeliveryRegionChange}
+                            onChange={handleDeliveryRegionChange} */
+                            options={Object.keys(deliveryRegionMap).map(
+                                (key) => ({
+                                    label: deliveryRegionMap[key]
+                                        .deliveryRegionKey,
+                                    value: key,
+                                })
+                            )}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('deliveryRegion', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Select',
                                 value: 'Select',

@@ -11,6 +11,8 @@ import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import type { CommonProps } from '@/@types/common'
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { setMerchantID } from '@/store/merchantSlice'
 
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -43,100 +45,6 @@ const SignInForm = (props: SignInFormProps) => {
     const { signIn } = useAuth()
 
     const [showFetchingInfo, setShowFetchingInfo] = useState(false)
-
-    /*    const onSignIn = async (
-        values: SignInFormSchema,
-        setSubmitting: (isSubmitting: boolean) => void
-    ) => {
-        const { userName, password } = values
-        setSubmitting(true)
-        let fetchingInfoTimeout = setTimeout(
-            () => setShowFetchingInfo(true),
-            1500
-        )
-
-        const result = await signIn({ userName, password })
-
-        if (result?.status === 'failed') {
-            setMessage(result.message)
-            clearTimeout(fetchingInfoTimeout)
-            setShowFetchingInfo(false)
-        }
-
-        setSubmitting(false)
-        setShowFetchingInfo(false)
-    }
- */
-
-    /*     const onSignIn = async (
-        values: SignInFormSchema,
-        setSubmitting: (isSubmitting: boolean) => void
-    ) => {
-        const { userName, password } = values
-        setSubmitting(true)
-
-        // Counter for retry attempts
-        let retryCount = 0
-
-        // Function to handle the sign-in logic
-        const signInLogic = async () => {
-            // Set timeout for fetching info
-            let fetchingInfoTimeout = setTimeout(() => {
-                setShowFetchingInfo(true)
-            }, 1500)
-
-            try {
-                // Attempt to sign in
-                const result = await signIn({ userName, password })
-
-                if (result?.status === 'failed') {
-                    setMessage(result.message)
-                    console.log('Login failed')
-                }
-
-                if (result?.status === 'success') {
-                    // Assuming 'success' is the status for a successful sign-in
-                    console.log(
-                        `Login request attempt ${
-                            retryCount + 1
-                        } was successful.`
-                    ) // Log successful attempt
-                } else if (result?.status === 'failed') {
-                    setMessage(result.message)
-                }
-
-                // Clear the fetching info timeout
-                clearTimeout(fetchingInfoTimeout)
-                setShowFetchingInfo(false)
-            } catch (error) {
-                // Handle timeout error
-                if (error.message && error.message.includes('exceeded')) {
-                    // Retry logic
-                    if (retryCount < 2) {
-                        retryCount++
-                        console.log(`Retry attempt ${retryCount}`)
-                        await signInLogic() // Retry the sign-in logic
-                    } else {
-                        console.error('Maximum retry attempts reached.')
-                        setMessage('Sign-in failed. Please try again later.')
-                        setShowFetchingInfo(false)
-                    }
-                } else {
-                    // Handle other types of errors
-                    console.log('Error during sign-in:', error.message)
-                    console.error('Error during sign-in:', error.message)
-                    setMessage('Sign-in failed. Please try again later.')
-                    setShowFetchingInfo(false)
-                }
-            }
-        }
-
-        // Call the sign-in logic
-        await signInLogic()
-
-        // Complete the submission
-        setSubmitting(false)
-    } */
 
     const onSignIn = async (
         values: SignInFormSchema,
@@ -173,6 +81,8 @@ const SignInForm = (props: SignInFormProps) => {
                             retryCount + 1
                         } was successful.`
                     ) // Log successful attempt
+
+                    console.log('LOGIN result.data', result)
                 } else if (result?.status === 'failed') {
                     setMessage(result.message)
                 }
@@ -209,6 +119,9 @@ const SignInForm = (props: SignInFormProps) => {
 
         // Complete the submission
         console.log('Sign-in logic completed.')
+
+        /* FETCH MERCHANT DATA */
+
         setSubmitting(false)
     }
 
