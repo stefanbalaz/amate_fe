@@ -65,11 +65,23 @@ const SignInForm = (props: SignInFormProps) => {
             }, 1500)
 
             try {
+                fetchingInfoTimeout = setTimeout(() => {
+                    console.log('Fetching info timeout reached.')
+                    setShowFetchingInfo(true)
+                }, 1500)
+
                 console.log('Attempting to sign in...')
                 // Attempt to sign in
                 const result = await signIn({ userName, password })
 
                 if (result?.status === 'failed') {
+                    console.log('Login failed:', result.message)
+                }
+
+                if (
+                    result?.status === 'failed' &&
+                    !result.message.includes('timeout')
+                ) {
                     setMessage(result.message)
                     console.log('Login failed:', result.message)
                 }
@@ -83,17 +95,16 @@ const SignInForm = (props: SignInFormProps) => {
                     ) // Log successful attempt
 
                     console.log('LOGIN result.data', result)
-                } else if (result?.status === 'failed') {
+                } else if (
+                    result?.status === 'failed' &&
+                    !result.message.includes('timeout')
+                ) {
                     setMessage(result.message)
                 }
 
-                // Clear the fetching info timeout
-                clearTimeout(fetchingInfoTimeout)
-                setShowFetchingInfo(false)
-            } catch (error) {
-                // Handle timeout error
-                if (error.message && error.message.includes('exceeded')) {
-                    // Retry logic
+                // Check if the response message contains a timeout indication
+                if (result?.message && result.message.includes('timeout')) {
+                    // Handle timeout error
                     if (retryCount < 2) {
                         retryCount++
                         console.log(`Retry attempt ${retryCount}`)
@@ -103,13 +114,18 @@ const SignInForm = (props: SignInFormProps) => {
                         setMessage('Sign-in failed. Please try again later.')
                         setShowFetchingInfo(false)
                     }
-                } else {
-                    // Handle other types of errors
-                    console.log('Error during sign-in:', error.message)
-                    console.error('Error during sign-in:', error.message)
-                    setMessage('Sign-in failed. Please try again later.')
-                    setShowFetchingInfo(false)
                 }
+
+                // Clear the fetching info timeout
+                clearTimeout(fetchingInfoTimeout)
+                setShowFetchingInfo(false)
+            } catch (error) {
+                console.log('ERROR:', error)
+                // Handle other types of errors
+                console.log('Error during sign-in:', error.message)
+                console.error('Error during sign-in:', error.message)
+                setMessage('Sign-in failed. Please try again later.')
+                setShowFetchingInfo(false)
             }
         }
 
