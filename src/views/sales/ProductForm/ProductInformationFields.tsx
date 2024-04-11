@@ -44,10 +44,11 @@ type ProductInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const ProductInformationFields = (props: ProductInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, onFieldChange } = props
     const dispatch = useAppDispatch()
 
     const [orderProductClassic, setOrderProductClassic] = useState<number>(0)
@@ -70,25 +71,26 @@ const ProductInformationFields = (props: ProductInformationFields) => {
         setOrderProduct: React.Dispatch<React.SetStateAction<number>>,
         amount: number,
         productType: string,
+        fieldValue: number, // Value of the field
         e: React.MouseEvent<HTMLButtonElement>
     ) => {
         e?.preventDefault()
-        setOrderProduct((prevValue) => {
-            const newValue = Math.max(prevValue + amount, 0)
 
-            // Dispatch the action to update the product amount in the Redux store
-            dispatch(setProductAmount({ productType, amount: newValue }))
-            //  dispatch(setProductAmount({ productType, amount }))
-
-            return newValue
-        })
+        const newValue = Math.max(fieldValue + amount, 0)
+        setOrderProduct(newValue)
+        handleFieldChange(productType, newValue)
+        dispatch(setProductAmount({ productType, amount: newValue }))
     }
 
-    console.log('orderProductClassic', orderProductClassic)
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
+
+    /*     console.log('orderProductClassic', orderProductClassic)
     console.log('orderProductMelon', orderProductMelon)
     console.log('orderProductMint', orderProductMint)
     console.log('orderProductHemp', orderProductHemp)
-    console.log('orderProductGinger', orderProductGinger)
+    console.log('orderProductGinger', orderProductGinger) */
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -114,7 +116,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductClassic,
                                     -20,
-                                    'classic',
+                                    'orderProductClassic',
+                                    orderProductClassic,
                                     e
                                 )
                             }
@@ -130,7 +133,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductClassic,
                                     -1,
-                                    'classic',
+                                    'orderProductClassic',
+                                    orderProductClassic,
                                     e
                                 )
                             }
@@ -156,7 +160,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductClassic,
                                     1,
-                                    'classic',
+                                    'orderProductClassic',
+                                    orderProductClassic,
                                     e
                                 )
                             }
@@ -172,7 +177,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductClassic,
                                     20,
-                                    'classic',
+                                    'orderProductClassic',
+                                    orderProductClassic,
                                     e
                                 )
                             }
@@ -201,7 +207,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMelon,
                                     -20,
-                                    'melon',
+                                    'orderProductMelon',
+                                    orderProductMelon,
                                     e
                                 )
                             }
@@ -217,7 +224,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMelon,
                                     -1,
-                                    'melon',
+                                    'orderProductMelon',
+                                    orderProductMelon,
                                     e
                                 )
                             }
@@ -244,7 +252,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMelon,
                                     1,
-                                    'melon',
+                                    'orderProductMelon',
+                                    orderProductMelon,
                                     e
                                 )
                             }
@@ -260,7 +269,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMelon,
                                     20,
-                                    'melon',
+                                    'orderProductMelon',
+                                    orderProductMelon,
                                     e
                                 )
                             }
@@ -289,7 +299,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMint,
                                     -20,
-                                    'mint',
+                                    'orderProductMint',
+                                    orderProductMint,
                                     e
                                 )
                             }
@@ -305,7 +316,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMint,
                                     -1,
-                                    'mint',
+                                    'orderProductMint',
+                                    orderProductMint,
                                     e
                                 )
                             }
@@ -332,7 +344,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMint,
                                     1,
-                                    'mint',
+                                    'orderProductMint',
+                                    orderProductMint,
                                     e
                                 )
                             }
@@ -348,7 +361,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductMint,
                                     20,
-                                    'mint',
+                                    'orderProductMint',
+                                    orderProductMint,
                                     e
                                 )
                             }
@@ -377,7 +391,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductHemp,
                                     -20,
-                                    'hemp',
+                                    'orderProductHemp',
+                                    orderProductHemp,
                                     e
                                 )
                             }
@@ -393,7 +408,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductHemp,
                                     -1,
-                                    'hemp',
+                                    'orderProductHemp',
+                                    orderProductHemp,
                                     e
                                 )
                             }
@@ -420,7 +436,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductHemp,
                                     1,
-                                    'hemp',
+                                    'orderProductHemp',
+                                    orderProductHemp,
                                     e
                                 )
                             }
@@ -436,7 +453,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductHemp,
                                     20,
-                                    'hemp',
+                                    'orderProductHemp',
+                                    orderProductHemp,
                                     e
                                 )
                             }
@@ -465,7 +483,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductGinger,
                                     -20,
-                                    'ginger',
+                                    'orderProductGinger',
+                                    orderProductGinger,
                                     e
                                 )
                             }
@@ -481,7 +500,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductGinger,
                                     -1,
-                                    'ginger',
+                                    'orderProductGinger',
+                                    orderProductGinger,
                                     e
                                 )
                             }
@@ -508,7 +528,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductGinger,
                                     1,
-                                    'ginger',
+                                    'orderProductGinger',
+                                    orderProductGinger,
                                     e
                                 )
                             }
@@ -524,7 +545,8 @@ const ProductInformationFields = (props: ProductInformationFields) => {
                                 onClickHandler(
                                     setOrderProductGinger,
                                     20,
-                                    'ginger',
+                                    'orderProductGinger',
+                                    orderProductGinger,
                                     e
                                 )
                             }

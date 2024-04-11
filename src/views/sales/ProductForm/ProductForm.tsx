@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button'
 import hooks from '@/components/ui/hooks'
 import StickyFooter from '@/components/shared/StickyFooter'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import { Form, Formik, FormikProps } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import BasicInformationFields from './BasicInformationFields'
 import PartnerInformationFields from './PartnerInformationFields'
 import ProductInformationFields from './ProductInformationFields'
@@ -19,51 +19,31 @@ import * as Yup from 'yup'
 import { useAppSelector } from '@/store'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-type FormikRef = FormikProps<any>
+type FormikRef = FormikHelpers<any>
 
 type InitialData = {
-    id?: string
-    name?: string
-    orderNumber?: string
-    orderPartner?: string
-    orderStatus?: string
+    // deliveryDate?: Date
     orderCreationDate?: Date
-    orderProductClassic?: Number
-    orderProductMelon?: Number
-    orderProductMint?: Number
-    orderProductHemp?: Number
-    orderProductGinger?: Number
-    productVolume?: Number
+    orderStatus?: string
+    /*  orderNumber?: string
+    orderPartner?: string
+    orderProductClassic?: number
+    orderProductMelon?: number
+    orderProductMint?: number
+    orderProductHemp?: number
+    orderProductGinger?: number
+    productVolume?: number
     transportMedium?: string
     containerMedium?: string
-    unitsPerTransportMedium?: Number
-    transportMediumIssuanceAmount?: Number
-    containerMediumReceiptAmount?: Number
-    palletIssuanceAmount?: Number
-    transportMediumReceiptAmount?: Number
-    palletReceiptAmount?: Number
+    unitsPerTransportMedium?: number
+    transportMediumIssuanceAmount?: number
+    containerMediumReceiptAmount?: number
+    palletIssuanceAmount?: number
+    transportMediumReceiptAmount?: number
+    palletReceiptAmount?: number
     deliveryMethod?: string
     deliveryMethodDetail?: string
-    deliveryDate?: Date
-    deliveryRegion?: string
-    productCode?: string
-    img?: string
-    imgList?: {
-        id: string
-        name: string
-        img: string
-    }[]
-    category?: string
-    price?: number
-    stock?: number
-    status?: number
-    costPerItem?: number
-    bulkDiscountPrice?: number
-    taxRate?: number
-    tags?: string[]
-    brand?: string
-    vendor?: string
-    description?: string
+    deliveryRegion?: string */
 }
 
 export type FormModel = Omit<InitialData, 'tags'> & {
@@ -76,7 +56,7 @@ export type OnDeleteCallback = React.Dispatch<React.SetStateAction<boolean>>
 
 type OnDelete = (callback: OnDeleteCallback) => void
 
-type ProductForm = {
+type ProductFormProps = {
     initialData?: InitialData
     type: 'edit' | 'new'
     onDiscard?: () => void
@@ -87,14 +67,11 @@ type ProductForm = {
 const { useUniqueId } = hooks
 
 const validationSchema = Yup.object().shape({
-    //   orderNumber: Yup.string().required('Order Number Required'),
-    orderPartner: Yup.string().required('Order Partner Required'),
-    //   orderStatus: Yup.string().required('Order Status Required'),
-    orderCreationDate: Yup.string().required('Order Creation Date Required'),
+    /*   orderCreationDate: Yup.date().required('Order Creation Date Required'),
     name: Yup.string().required('Product Name Required'),
     price: Yup.number().required('Price Required'),
     stock: Yup.number().required('SKU Required'),
-    category: Yup.string().required('Category Required'),
+    category: Yup.string().required('Category Required'), */
 })
 
 const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
@@ -144,94 +121,104 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     )
 }
 
-const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
+const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
     const {
         type,
         initialData = {
-            id: '',
-            orderNumber: '',
-            orderPartner: '',
-            orderStatus: '',
+            //  orderNumber: '',
             orderCreationDate: new Date(),
-            orderProductClassic: 0,
+            orderStatus: 'preliminary_order',
+            //   orderPartner: '',
+            /*    orderProductClassic: 0,
             orderProductMelon: 0,
             orderProductMint: 0,
             orderProductHemp: 0,
             orderProductGinger: 0,
-            productVolume: 0.33,
-            transportMedium: 'Crate',
-            containerMedium: 'Glass',
-            unitsPerTransportMedium: 20,
+            productVolume: 0, */
+            //  transportMedium: '',
+            //  containerMedium: '',
+            /*      unitsPerTransportMedium: 0,
             transportMediumIssuanceAmount: 0,
             containerMediumReceiptAmount: 0,
             palletIssuanceAmount: 0,
             transportMediumReceiptAmount: 0,
-            palletReceiptAmount: 0,
-            deliveryMethod: '',
-            deliveryMethodDetail: '',
-            deliveryDate: '',
-            deliveryRegion: '',
-            name: '',
-            productCode: '',
-            img: '',
-            imgList: [],
-            category: '',
-            price: 0,
-            stock: 0,
-            status: 0,
-            costPerItem: 0,
-            bulkDiscountPrice: 0,
-            taxRate: 6,
-            tags: [],
-            brand: '',
-            vendor: '',
-            description: '',
+            palletReceiptAmount: 0, */
+            //  deliveryMethod: '',
+            //  deliveryMethodDetail: '',
+            // deliveryDate: new Date(),
+            //  deliveryRegion: '',
         },
-        onFormSubmit,
+        //  onFormSubmit,
         onDiscard,
         onDelete,
     } = props
+
+    // const initialValues = { ...initialData }
+
+    // Define state to hold form data
+    const [formData, setFormData] = useState<FormModel>({
+        ...initialData,
+    })
+
+    console.log('initialData', initialData)
+
+    // Function to update form data
+    const handleFieldChange = (fieldName: string, value: any) => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [fieldName]: value,
+        }))
+    }
+
+    console.log('FORM DATA', formData)
 
     const newId = useUniqueId('product-')
 
     const productAmounts = useAppSelector((state) => state.product)
     console.log('productAmounts', productAmounts)
 
+    const handleSubmit = async (
+        // values: FormModel,
+
+        { setSubmitting }: FormikRef
+    ) => {
+        console.log('Form submitted with values:', formData)
+        try {
+            // Call the endpoint to submit the form data
+            const response = await fetch('http://localhost:8000/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+
+            // Check if the request was successful (status code 2xx)
+            if (response.ok) {
+                const body = await response.json()
+                console.log('Response body:', body)
+                // Handle success (if needed)
+            } else {
+                // Handle error response
+                console.error('Error submitting form:', response.statusText)
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error)
+            // Handle other errors (e.g., network issues)
+        } finally {
+            // Set submitting to false
+            setSubmitting(false)
+        }
+    }
+
     return (
         <>
             <Formik
-                innerRef={ref}
                 initialValues={{
                     ...initialData,
-                    tags: initialData?.tags
-                        ? initialData.tags.map((value) => ({
-                              label: value,
-                              value,
-                          }))
-                        : [],
                 }}
                 validationSchema={validationSchema}
-                /*          initialTouched={{
-                    // Set only specific fields as touched initially
-                    orderNumber: true,
-                    orderStatus: true,
-                }} */
-                onSubmit={(values: FormModel, { setSubmitting }) => {
-                    const formData = cloneDeep(values)
-                    formData.tags = formData.tags.map((tag) => {
-                        if (typeof tag !== 'string') {
-                            return tag.value
-                        }
-                        return tag
-                    })
-                    if (type === 'new') {
-                        formData.id = newId
-                        if (formData.imgList && formData.imgList.length > 0) {
-                            formData.img = formData.imgList[0].img
-                        }
-                    }
-                    onFormSubmit?.(formData, setSubmitting)
-                }}
+                onSubmit={handleSubmit}
             >
                 {({ values, touched, errors, isSubmitting }) => (
                     <Form>
@@ -242,36 +229,43 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <PartnerInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <ProductInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <PackagingInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <DeliveryInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <BillingInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                     <AdditionalInformationFields
                                         touched={touched}
                                         errors={errors}
                                         values={values}
+                                        onFieldChange={handleFieldChange}
                                     />
                                 </div>
                                 {/*                 <div className="lg:col-span-1">

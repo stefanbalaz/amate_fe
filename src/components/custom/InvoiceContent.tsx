@@ -14,6 +14,8 @@ import { fetchOrderWithPartnerMerchant } from '@/services/OrderService'
 import { deliveryAddressPartnerOrderNumberPartnerMerchantID } from '@/configs/invoice/invoicePartnerConfig'
 import Input from '@/components/ui/Input'
 import { PriceAmount } from '@/configs/custom/units'
+import { useDispatch } from 'react-redux'
+import { setMerchantID } from '@/store/merchantSlice'
 
 type Invoice = {
     id: string
@@ -112,6 +114,12 @@ const InvoiceContent = () => {
     const [editableInvoiceNumber, setEditableInvoiceNumber] = useState(
         data?.orderPayment?.invoiceNumber || ''
     )
+
+    /* DISPATCH MERCHANTID TO REDUX STORE */
+    const dispatch = useDispatch()
+    const merchantID = data?.orderMerchant?.ID
+    dispatch(setMerchantID(merchantID))
+    console.log('merchantID', merchantID)
 
     console.log('INVOICE DATa', data)
 
@@ -556,8 +564,8 @@ const InvoiceContent = () => {
                                 <br />
                                 {/*   IBAN:{' '}
                                 {data?.orderMerchant.selectedMerchantData?.IBAN} */}
-                                <div>
-                                    <span className="iban-label">IBAN: </span>
+                                <div style={{ whiteSpace: 'nowrap' }}>
+                                    IBAN:
                                     <div className="iban-code">
                                         {data?.orderMerchant
                                             .selectedMerchantData?.IBAN &&

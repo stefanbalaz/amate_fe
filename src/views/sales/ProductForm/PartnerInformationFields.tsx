@@ -37,6 +37,7 @@ type PartnerInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const filterPartners = (inputValue, partners) => {
@@ -59,7 +60,7 @@ const loadOptions = (inputValue, callback) => {
 
             const filteredPartners = filterPartners(inputValue, data)
 
-            console.log('Filtered Partners:', filteredPartners)
+            //   console.log('Filtered Partners:', filteredPartners)
 
             const transformedPartners = filteredPartners
                 .filter((partner) => partner.partnerDisplayName)
@@ -68,7 +69,7 @@ const loadOptions = (inputValue, callback) => {
                     label: partner.partnerDisplayName,
                 }))
 
-            console.log('Transformed Partners:', transformedPartners)
+            //    console.log('Transformed Partners:', transformedPartners)
 
             callback(transformedPartners)
         } catch (error) {
@@ -79,7 +80,7 @@ const loadOptions = (inputValue, callback) => {
 }
 
 const PartnerInformationFields = (props: PartnerInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, values, onFieldChange } = props
 
     const [orderPartner, setOrderPartner] = useState<String | null>('')
     const [partnerExternalOrderNumber, setPartnerExternalOrderNumber] =
@@ -94,14 +95,18 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
         }
     }
 
-    console.log('orderPartner', orderPartner)
+    //  console.log('orderPartner', orderPartner)
 
     const handlePartnerExternalOrderNumberChange = (e) => {
         const insertedValue = e.target.value
         setPartnerExternalOrderNumber(insertedValue)
     }
 
-    console.log('Partner External Order Number', partnerExternalOrderNumber)
+    //  console.log('Partner External Order Number', partnerExternalOrderNumber)
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -124,7 +129,13 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
                                 loadOptions(inputValue, callback)
                             }
                             defaultOptions
-                            onChange={handlePartnerChange}
+                            //  onChange={handlePartnerChange}
+                            onChange={(selectedOption) =>
+                                handleFieldChange('orderPartner', {
+                                    partnerID: selectedOption.value,
+                                    partnerName: selectedOption.label,
+                                })
+                            }
                             componentAs={AsyncSelect}
                         />
                     </FormItem>
@@ -141,7 +152,13 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
                     >
                         <Input
                             placeholder="External Order Number"
-                            onChange={handlePartnerExternalOrderNumberChange}
+                            // onChange={handlePartnerExternalOrderNumberChange}
+                            onChange={(e) =>
+                                handleFieldChange(
+                                    'partnerExternalOrderNumber',
+                                    e.target.value
+                                )
+                            }
                         />
                     </FormItem>
                 </div>

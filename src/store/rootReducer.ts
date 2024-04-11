@@ -4,6 +4,7 @@ import base, { BaseState } from './slices/base'
 import locale, { LocaleState } from './slices/locale/localeSlice'
 import theme, { ThemeState } from './slices/theme/themeSlice'
 import productReducer from './productSlice'
+import merchantReducer from './merchantSlice'
 import RtkQueryService from '@/services/RtkQueryService'
 
 export type RootState = CombinedState<{
@@ -25,6 +26,7 @@ const staticReducers = {
     locale,
     theme,
     product: productReducer,
+    merchant: merchantReducer,
     [RtkQueryService.reducerPath]: RtkQueryService.reducer,
 }
 

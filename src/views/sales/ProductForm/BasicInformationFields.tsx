@@ -10,6 +10,7 @@ import React from 'react'
 import Select from '@/components/ui/Select'
 import { orderStatusMap } from '@/configs/order.overview/orderStringMapper'
 import AsyncSelect from 'react-select/async'
+import { useSelector } from 'react-redux'
 
 type Options = {
     label: string
@@ -33,10 +34,11 @@ type BasicInformationFields = {
         tags: Options
         [key: string]: unknown
     }
+    onFieldChange: (fieldName: string, value: any) => void
 }
 
 const BasicInformationFields = (props: BasicInformationFields) => {
-    const { touched, errors } = props
+    const { touched, errors, values, onFieldChange } = props
 
     const [date, setDate] = useState<Date | null>(new Date())
     const [orderStatus, setOrderStatus] = useState<string | null>(
@@ -44,7 +46,7 @@ const BasicInformationFields = (props: BasicInformationFields) => {
     )
     const [orderNumber, setOrderNumber] = useState<String | null>('')
 
-    const handleDatePickerChange = (date: Date | null) => {
+    /*   const handleDatePickerChange = (date: Date | null) => {
         console.log('Selected date', date)
         setDate(date)
     }
@@ -55,20 +57,32 @@ const BasicInformationFields = (props: BasicInformationFields) => {
         setOrderStatus(selectedOrderStatus)
     }
 
-    console.log('DrawerOrderStatusContent', orderStatusMap)
+    console.log('DrawerOrderStatusContent', orderStatusMap) */
 
     useEffect(() => {
         const generateOrderNumber = () => {
             fetch('https://amate.onrender.com/module/orderNumber')
                 .then((response) => response.json())
-                .then((data) => setOrderNumber(data))
+                .then((data) => {
+                    setOrderNumber(data)
+                    onFieldChange('orderNumber', data.orderNumber)
+                })
                 .catch((error) => console.error(error))
         }
 
         generateOrderNumber()
     }, [])
 
-    console.log('orderNumber', orderNumber)
+    //  console.log('orderNumber', orderNumber)
+
+    const handleFieldChange = (fieldName: string, value: any) => {
+        onFieldChange(fieldName, value)
+    }
+
+    /* TEST */
+
+    const merchantID = useSelector((state) => state.merchant.merchantID)
+    console.log('merchantID BASIC INFORMATION', merchantID)
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -85,6 +99,18 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                         }
                         errorMessage={errors.orderNumber}
                     >
+                        {/*   <Field
+                            disabled
+                            type="text"
+                            autoComplete="off"
+                            name="orderNumber"
+                            placeholder="Order Number"
+                            component={Input}
+                            value={orderNumber.orderNumber}
+                            onChange={(e) =>
+                                handleFieldChange('orderNumber', e.target.value)
+                            }
+                        /> */}
                         <Field
                             disabled
                             type="text"
@@ -106,16 +132,34 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                     >
                         <Select
                             placeholder="Order Status"
-                            options={Object.values(orderStatusMap).map(
+                            /*   options={Object.values(orderStatusMap).map(
                                 (statusInfo) => ({
                                     label: statusInfo.orderStatusKey,
                                     value: statusInfo.orderStatusKey,
                                 })
-                            )}
-                            onChange={handleOrderStatusChange}
+                            )} */
+                            //   onChange={handleOrderStatusChange}
+                            /*      onChange={
+                                (selectedOption) =>
+                                    handleFieldChange(
+                                        'orderStatus',
+                                        selectedOption.value
+                                    ) // Use handleFieldChange to update field value
+                            } */
+                            options={Object.keys(orderStatusMap).map((key) => ({
+                                label: orderStatusMap[key].orderStatusKey,
+                                value: key,
+                            }))}
+                            onChange={(selectedOption) => {
+                                const { value, label } = selectedOption
+                                handleFieldChange('orderStatus', {
+                                    value,
+                                    label,
+                                })
+                            }}
                             defaultValue={{
                                 label: 'Preliminary Order',
-                                value: 'Preliminary Order',
+                                value: 'preliminary_order',
                             }}
                         />
                     </FormItem>
@@ -138,7 +182,11 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                             name="orderCreationDate"
                             placeholder="Creation Date"
                             value={date}
-                            onChange={handleDatePickerChange}
+                            // onChange={handleDatePickerChange}
+                            onChange={
+                                (date) =>
+                                    handleFieldChange('orderCreationDate', date) // Use handleFieldChange to update field value
+                            }
                         />
                     </FormItem>
 
