@@ -12,6 +12,7 @@ export async function apiSignIn(data: SignInCredential) {
     return ApiService.fetchData<SignInResponse>({
         /* url: 'https://amate.onrender.com/partner/login', */
         url: 'https://amate.onrender.com/partner/login',
+        // url: 'http://localhost:8000/partner/login',
 
         method: 'post',
         data,
