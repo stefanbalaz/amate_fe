@@ -61,7 +61,7 @@ const { Addon } = InputGroup
 const PackagingInformationFields = (props: PackagingInformationFields) => {
     const { touched, errors, onFieldChange } = props
 
-    const [productVolume, setProductVolume] = useState<number | null>(0.33)
+    const [productVolume, setProductVolume] = useState<number | null>("0,33")
 
     const [transportMedium, setTransportMedium] = useState<string | null>(
         'Crate'
@@ -182,7 +182,7 @@ const PackagingInformationFields = (props: PackagingInformationFields) => {
                                     })
                                 }}
                                 defaultValue={{
-                                    label: '0.33',
+                                    label: '0,33',
                                     value: '0.33',
                                 }}
                             />

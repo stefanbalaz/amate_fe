@@ -195,7 +195,7 @@ const ReactTable = ({
         data?.forEach((order) => {
             order.orderProduct.forEach((product) => {
                 const { ID } = product
-                const flavorName = productFlavorMap[ID]
+                const flavorName = productFlavorMap[ID][0]
 
                 if (!flavorColumns[flavorName]) {
                     flavorColumns[flavorName] = {

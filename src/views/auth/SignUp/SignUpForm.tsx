@@ -19,6 +19,7 @@ type SignUpFormSchema = {
     userName: string
     password: string
     email: string
+    merchant: string
 }
 
 const validationSchema = Yup.object().shape({
@@ -31,6 +32,7 @@ const validationSchema = Yup.object().shape({
         [Yup.ref('password')],
         'Your passwords do not match'
     ),
+    merchant: Yup.string().required('Please enter your merchant-ID'),
 })
 
 const SignUpForm = (props: SignUpFormProps) => {
@@ -59,7 +61,7 @@ const SignUpForm = (props: SignUpFormProps) => {
         values: SignUpFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { userName, password, email } = values
+        const { userName, password, email, merchant } = values
         setSubmitting(true)
 
         try {
@@ -67,6 +69,7 @@ const SignUpForm = (props: SignUpFormProps) => {
                 userName,
                 password,
                 email,
+                merchant,
             })
 
             if (result?.status === 'failed') {
@@ -93,6 +96,7 @@ const SignUpForm = (props: SignUpFormProps) => {
                     password: '',
                     confirmPassword: '',
                     email: '@',
+                    merchant: '658b4f18117e544afc8ab4d2',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -157,6 +161,23 @@ const SignUpForm = (props: SignUpFormProps) => {
                                     name="confirmPassword"
                                     placeholder="Confirm Password"
                                     component={PasswordInput}
+                                />
+                            </FormItem>
+                            <FormItem
+                                label="Merchant"
+                                invalid={
+                                    (errors.merchant &&
+                                        touched.merchant) as boolean
+                                }
+                                errorMessage={errors.merchant}
+                                style={{ display: 'none' }}
+                            >
+                                <Field
+                                    autoComplete="off"
+                                    name="merchant"
+                                    placeholder="Merchant"
+                                    component={Input}
+                                    hidden={true}
                                 />
                             </FormItem>
                             <Button

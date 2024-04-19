@@ -40,7 +40,9 @@ type BasicInformationFields = {
 const BasicInformationFields = (props: BasicInformationFields) => {
     const { touched, errors, values, onFieldChange } = props
 
-    const [date, setDate] = useState<Date | null>(new Date())
+    const [orderCreationDate, setOrderCreationDate] = useState<Date | null>(
+        new Date()
+    )
     const [orderStatus, setOrderStatus] = useState<string | null>(
         'Preliminary Order'
     )
@@ -77,12 +79,16 @@ const BasicInformationFields = (props: BasicInformationFields) => {
 
     const handleFieldChange = (fieldName: string, value: any) => {
         onFieldChange(fieldName, value)
+
+        if (fieldName === 'orderCreationDate') {
+            setOrderCreationDate(value)
+        }
     }
 
     /* TEST */
 
-    const merchantID = useSelector((state) => state.merchant.merchantID)
-    console.log('merchantID BASIC INFORMATION', merchantID)
+    /*     const merchantID = useSelector((state) => state.merchant.merchantID)
+    console.log('merchantID BASIC INFORMATION', merchantID) */
 
     return (
         <AdaptableCard divider className="mb-5">
@@ -181,11 +187,14 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                             inputFormat="MMMM, DD YYYY"
                             name="orderCreationDate"
                             placeholder="Creation Date"
-                            value={date}
+                            value={orderCreationDate}
                             // onChange={handleDatePickerChange}
                             onChange={
-                                (date) =>
-                                    handleFieldChange('orderCreationDate', date) // Use handleFieldChange to update field value
+                                (orderCreationDate) =>
+                                    handleFieldChange(
+                                        'orderCreationDate',
+                                        orderCreationDate
+                                    ) // Use handleFieldChange to update field value
                             }
                         />
                     </FormItem>

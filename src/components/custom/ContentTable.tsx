@@ -81,7 +81,7 @@ const ContentTable = ({
                 const productId = data.row?.original.ID
                 const volume = data.row?.original.volume
                 const flavorName =
-                    productFlavorMap[productId] || 'Unknown Flavor'
+                    productFlavorMap[productId][0] || 'Unknown Flavor'
                 return (
                     <div>
                         AMATE {flavorName} {volume}l
