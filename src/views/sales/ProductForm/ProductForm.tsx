@@ -444,7 +444,8 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
 
         try {
             // Call the endpoint to submit the form data
-            const response = await fetch('http://localhost:8000/order/', {
+            //const response = await fetch('http://localhost:8000/order/', {
+            const response = await fetch('https://amate.onrender.com/order/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
