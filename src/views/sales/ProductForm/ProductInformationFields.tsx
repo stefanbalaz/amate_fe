@@ -25,7 +25,7 @@ type Options = {
 }[]
 
 type FormFieldsName = {
-    orderProductClassic: Number
+    orderProductClassic: number
     orderNumber: string
     orderPartner: string
     orderStatus: string
@@ -39,7 +39,7 @@ type ProductInformationFields = {
     touched: FormikTouched<FormFieldsName>
     errors: FormikErrors<FormFieldsName>
     values: {
-        orderProductClassic: Number
+        orderProductClassic: number
         orderPartner: string
         tags: Options
         [key: string]: unknown

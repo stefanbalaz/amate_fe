@@ -59,13 +59,14 @@ const SignInForm = (props: SignInFormProps) => {
         // Function to handle the sign-in logic
         const signInLogic = async () => {
             // Set timeout for fetching info
-            let fetchingInfoTimeout = setTimeout(() => {
+            /*   let fetchingInfoTimeout = setTimeout(() => {
                 console.log('Fetching info timeout reached.')
                 setShowFetchingInfo(true)
-            }, 1500)
+            }, 1500) */
 
             try {
-                fetchingInfoTimeout = setTimeout(() => {
+                // Set timeout for fetching info
+                const fetchingInfoTimeout = setTimeout(() => {
                     console.log('Fetching info timeout reached.')
                     setShowFetchingInfo(true)
                 }, 1500)
@@ -135,8 +136,6 @@ const SignInForm = (props: SignInFormProps) => {
 
         // Complete the submission
         console.log('Sign-in logic completed.')
-
-        /* FETCH MERCHANT DATA */
 
         setSubmitting(false)
     }
@@ -212,6 +211,7 @@ const SignInForm = (props: SignInFormProps) => {
                                     component={PasswordInput}
                                 />
                             </FormItem>
+
                             <div className="flex justify-between mb-6">
                                 <Field
                                     className="mb-0"

@@ -17,6 +17,8 @@ import { HiOutlineTrash } from 'react-icons/hi'
 import { AiOutlineSave } from 'react-icons/ai'
 import * as Yup from 'yup'
 import { useAppSelector } from '@/store'
+import productFlavorMap from '@/configs/order.overview/productFlavorMap'
+import OrderProducts from '../OrderDetails/components/OrderProducts'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikHelpers<any>
@@ -25,6 +27,7 @@ type InitialData = {
     // deliveryDate?: Date
     orderCreationDate?: Date
     orderStatus?: string
+    productVolume?: number
     /*  orderNumber?: string
     orderPartner?: string
     orderProductClassic?: number
@@ -32,7 +35,6 @@ type InitialData = {
     orderProductMint?: number
     orderProductHemp?: number
     orderProductGinger?: number
-    productVolume?: number
     transportMedium?: string
     containerMedium?: string
     unitsPerTransportMedium?: number
@@ -46,8 +48,58 @@ type InitialData = {
     deliveryRegion?: string */
 }
 
-export type FormModel = Omit<InitialData, 'tags'> & {
+/* export type FormModel = Omit<InitialData, 'tags'> & {
     tags: { label: string; value: string }[] | string[]
+} */
+
+// Define form model according to the provided order data structure
+type FormModel = {
+    orderPartner: {
+        ID: string
+        externalOrderNumber: string
+    }
+    orderStatus: string
+    orderCreationDate: Date
+    orderNote?: string
+    orderPayment: {
+        method: string
+        record: string
+        recordIssuanceDate?: Date
+        invoiceNumber?: string
+        dueDate?: Date
+        status: string
+        orderPartnerBillingAddressId: string
+        partnerProductPriceId: string
+    }
+    orderDelivery: {
+        method: string
+        methodDetail: string
+        date?: Date
+        region: string
+        deliveryNoteNumber?: string
+        deliveryNoteIssuanceDate?: Date
+        orderDeliveryAddressId: string
+    }
+    orderProduct: {
+        ID: string
+        quantity: number
+        batchID?: string
+        volume?: number
+    }[]
+    orderPackaging: {
+        containerMedium: string
+        containerMediumReceiptAmount?: number
+        transportMedium?: string
+        unitsPerTransportMedium?: number
+        transportMediumIssuanceAmount?: number
+        transportMediumReceiptAmount?: number
+        palletIssuanceAmount?: number
+        palletReceiptAmount?: number
+    }
+    orderMerchant: {
+        ID: string
+        merchantBillingAddressId: string
+    }
 }
 
 export type SetSubmitting = (isSubmitting: boolean) => void
@@ -122,19 +174,56 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
 }
 
 const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
+    // Select the user state from the Redux store
+    const user = useAppSelector((state) => state.auth)
+
+    //  const { avatar, userName, email, authority, partnerID } = user.user
+
+    console.log('USERUSER', user)
+
+    /*     console.log('Avatar:', avatar)
+ console.log('User Name:', userName)
+ console.log('Email:', email)
+ console.log('Authority:', authority)
+ console.log('Partner ID:', partnerID)
+
+ console.log('Destructured User Data:', {
+     avatar,
+     userName,
+     email,
+     authority,
+     partnerID,
+ }) */
+
+    // Convert productFlavorMap to an array of objects
+    const productFlavorArray = Object.entries(productFlavorMap).map(
+        ([ID, [flavour, fieldName]]) => ({
+            ID,
+            flavour,
+            fieldName,
+        })
+    )
+
+    console.log('productFlavorArray', productFlavorArray)
+
     const {
         type,
         initialData = {
             //  orderNumber: '',
+            //    orderProduct: [],
+            // Set default values for other properties
             orderCreationDate: new Date(),
             orderStatus: 'preliminary_order',
-            //   orderPartner: '',
-            /*    orderProductClassic: 0,
-            orderProductMelon: 0,
-            orderProductMint: 0,
-            orderProductHemp: 0,
-            orderProductGinger: 0,
-            productVolume: 0, */
+            orderPartner: '',
+            // Set productVolume property for each order product
+
+            orderProduct: productFlavorArray.map(({ ID }) => ({
+                ID,
+                quantity: 0,
+                batchID: '',
+                volume: 0.33,
+            })),
+
             //  transportMedium: '',
             //  containerMedium: '',
             /*      unitsPerTransportMedium: 0,
@@ -163,11 +252,180 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
     console.log('initialData', initialData)
 
     // Function to update form data
-    const handleFieldChange = (fieldName: string, value: any) => {
+
+    /*     const handleFieldChange = (fieldName: string, value: any) => {
         setFormData((prevFormData) => ({
             ...prevFormData,
             [fieldName]: value,
         }))
+    } */
+
+    // Function to generate order products array based on product flavor
+    const generateOrderProducts = (flavor, quantity, orderProducts) => {
+        const orderProductArray = []
+
+        orderProducts.forEach((product) => {
+            if (productFlavorMap[product.ID]?.includes(flavor)) {
+                orderProductArray.push({
+                    ID: product.ID,
+                    quantity: quantity,
+                    batchID: '',
+                    volume: product.volume,
+                })
+            }
+        })
+
+        return orderProductArray
+    }
+
+    // Inside the handleFieldChange function
+    const handleFieldChange = (fieldName: string, value: any) => {
+        setFormData((prevFormData) => {
+            let updatedFormData
+
+            switch (fieldName) {
+                case 'orderStatus':
+                    updatedFormData = {
+                        ...prevFormData,
+                        [fieldName]: value.value,
+                    }
+                    break
+                case 'orderPartner':
+                    updatedFormData = {
+                        ...prevFormData,
+                        [fieldName]: {
+                            ...prevFormData.orderPartner,
+                            ID: value.partnerID,
+                            partnerName: value.partnerName,
+                        },
+                    }
+                    break
+                case 'partnerExternalOrderNumber':
+                    updatedFormData = {
+                        ...prevFormData,
+                        orderPartner: {
+                            ...prevFormData.orderPartner,
+                            externalOrderNumber: value,
+                        },
+                    }
+                    break
+                case 'orderProductClassic':
+                case 'orderProductMelon':
+                case 'orderProductMint':
+                case 'orderProductHemp':
+                case 'orderProductGinger':
+                    // Handle updating order products
+                    updatedFormData = updateOrderProducts(
+                        prevFormData,
+                        fieldName,
+                        value
+                    )
+                    console.log('S-REQUEST PRODUCT prevFormData', prevFormData)
+                    console.log('S-REQUEST PRODUCT fieldName', fieldName)
+                    console.log('S-REQUEST PRODUCT value', value)
+                    break
+                case 'productVolume':
+                    updatedFormData = updateProductVolume(prevFormData, value)
+                    break
+                case 'deliveryDate':
+                    updatedFormData = {
+                        ...prevFormData,
+                        orderDelivery: { date: value },
+                    }
+                    break
+                case 'note':
+                    updatedFormData = {
+                        ...prevFormData,
+                        orderNote: value,
+                    }
+                    break
+                // Add cases for other field names if needed
+                case 'anotherField':
+                    // Handle another field transformation
+                    // Example:
+                    // const modifiedValue = transformValue(value);
+                    updatedFormData = {
+                        ...prevFormData,
+                        [fieldName]: value,
+                    }
+                    break
+                default:
+                    // For all other fields, simply update the value
+                    updatedFormData = {
+                        ...prevFormData,
+                        [fieldName]: value,
+                    }
+                    break
+            }
+
+            // Update the state with the updated form data
+            setFormData(updatedFormData)
+            return updatedFormData
+        })
+    }
+
+    // Function to update order products
+    const updateOrderProducts = (prevFormData, fieldName, value) => {
+        // Get the existing order products
+        const existingOrderProducts = prevFormData.orderProduct || []
+
+        // Generate order products for the current flavor
+        const newOrderProducts = generateOrderProducts(
+            fieldName,
+            value,
+            formData.orderProduct
+        )
+
+        // Merge the new order products with the existing ones
+        let mergedOrderProducts = [...existingOrderProducts]
+        newOrderProducts.forEach((newProduct) => {
+            const index = mergedOrderProducts.findIndex(
+                (existingProduct) => existingProduct.ID === newProduct.ID
+            )
+            if (index !== -1) {
+                // Product ID already exists, replace it
+                mergedOrderProducts[index] = newProduct
+            } else {
+                // Product ID doesn't exist, add it
+                mergedOrderProducts.push(newProduct)
+            }
+        })
+
+        // Update the volume for each order product
+        mergedOrderProducts = mergedOrderProducts.map((product) => {
+            const matchingNewProduct = newOrderProducts.find(
+                (newProduct) => newProduct.ID === product.ID
+            )
+            return {
+                ...product,
+                volume: matchingNewProduct
+                    ? matchingNewProduct.volume
+                    : product.volume,
+            }
+        })
+
+        // Create a new object with the merged order products
+        return {
+            ...prevFormData,
+            orderProduct: mergedOrderProducts,
+        }
+    }
+
+    // Function to update product volume
+    const updateProductVolume = (prevFormData, value) => {
+        // Iterate over each order product and update its volume
+        const updatedOrderProducts = prevFormData.orderProduct?.map(
+            (product) => ({
+                ...product,
+                volume: value.value,
+            })
+        )
+
+        // Create a new object with the updated order products
+        return {
+            ...prevFormData,
+            orderProduct: updatedOrderProducts,
+        }
     }
 
     console.log('FORM DATA', formData)
@@ -183,15 +441,19 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
         { setSubmitting }: FormikRef
     ) => {
         console.log('Form submitted with values:', formData)
+
         try {
             // Call the endpoint to submit the form data
-            const response = await fetch('http://localhost:8000/order', {
+            //const response = await fetch('http://localhost:8000/order/', {
+            const response = await fetch('https://amate.onrender.com/order/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
             })
+
+            console.log('Form submitted with response:', response)
 
             // Check if the request was successful (status code 2xx)
             if (response.ok) {

@@ -11,6 +11,8 @@ import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 import useQuery from './useQuery'
 import type { SignInCredential, SignUpCredential } from '@/@types/auth'
+import { useDispatch } from 'react-redux'
+import { setMerchantID } from '@/store/merchantSlice'
 
 type Status = 'success' | 'failed'
 
@@ -37,6 +39,8 @@ function useAuth() {
             if (resp.data) {
                 const { token } = resp.data
                 dispatch(signInSuccess(token))
+                console.log('DISPATCHING RESPONSE DATA', resp.data)
+
                 if (resp.data.user) {
                     dispatch(
                         setUser(
@@ -45,6 +49,7 @@ function useAuth() {
                                 userName: 'Anonymous',
                                 authority: ['USER'],
                                 email: '',
+                                partnerID: '',
                             }
                         )
                     )

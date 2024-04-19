@@ -240,52 +240,6 @@ export function mapDeliveryMethodToTag(deliveryMethod: string): JSX.Element {
     )
 }
 
-/* export function mapDeliveryMethodToTag(deliveryMethod: string): JSX.Element {
-    switch (deliveryMethod) {
-        case 'manufacturer_delivery':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                    <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                        Manufacturer Delivery
-                    </Tag>
-                </div>
-            )
-        case 'warehouse_pickup':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                    <Tag className="text-yellow-600 bg-yellow-100 dark:text-yellow-100 dark:bg-yellow-500/20 border-0 rounded">
-                        Warehouse Pickup
-                    </Tag>
-                </div>
-            )
-        case 'manufacturer_shop':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                    <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                        Manufacturer Shop
-                    </Tag>
-                </div>
-            )
-        case 'external_carrier':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                    <Tag className="text-purple-600 bg-purple-100 dark:text-purple-100 dark:bg-purple-500/20 border-0 rounded">
-                        External Carrier
-                    </Tag>
-                </div>
-            )
-        default:
-            return (
-                <div className="mr-2 rtl:ml-2">
-                    <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                        Other
-                    </Tag>
-                </div>
-            )
-    }
-}
- */
-
 export const deliveryMethodDetailMap: Record<string, DeliveryMethodDetailInfo> =
     {
         warehouse_ba: {
@@ -340,69 +294,6 @@ export function mapDeliveryMethodDetailToTag(
     )
 }
 
-/* export function mapDeliveryMethodDetailToTag(
-    deliveryMethodDetail: string
-): JSX.Element {
-    switch (deliveryMethodDetail) {
-        case 'warehouse_ba':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    Warehouse BA
-                     </Tag>
-                </div>
-            )
-        case 'warehouse_zm':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    Warehouse ZM
-                     </Tag>
-                </div>
-            )
-        case 'warehouse_po':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                        <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    Warehouse PO
-                      </Tag>
-                </div>
-            )
-        case 'bike_courier':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    Bike Courier
-                     </Tag>
-                </div>
-            )
-        case 'rf_pack':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    RF Pack
-                     </Tag>
-                </div>
-            )
-        case 'foxlog':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-green-600 bg-green-100 dark:text-green-100 dark:bg-green-500/20 border-0 rounded">
-                    Foxlog
-                     </Tag>
-                </div>
-            )
-        default:
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Other
-                     </Tag>
-                </div>
-            )
-    }
-} */
-
 export const deliveryRegionMap: Record<string, DeliveryRegionInfo> = {
     BA: {
         deliveryRegionKey: 'Bratislava',
@@ -432,35 +323,6 @@ export function mapDeliveryRegionToTag(deliveryRegion: string): JSX.Element {
         </div>
     )
 }
-
-/* export function mapDeliveryRegionToTag(deliveryRegion: string): JSX.Element {
-    switch (deliveryRegion) {
-        case 'BA':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Bratislava
-                       </Tag>
-                </div>
-            )
-        case 'PO':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Presov
-                     </Tag>
-                </div>
-            )
-        default:
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Other
-                     </Tag>
-                </div>
-            )
-    }
-} */
 
 export const paymentMethodMap: Record<string, PaymentMethodInfo> = {
     bank_transfer: {
@@ -501,51 +363,6 @@ export function mapPaymentMethodToTag(paymentMethod: string): JSX.Element {
         </div>
     )
 }
-
-/* export function mapPaymentMethodToTag(paymentMethod: string): JSX.Element {
-    switch (paymentMethod) {
-        case 'bank_transfer':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Bank Transfer
-                      </Tag>
-                </div>
-            )
-        case 'cash':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Cash
-                     </Tag>
-                </div>
-            )
-        case 'free_of_charge':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                       <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Free of Charge
-                       </Tag>
-                </div>
-            )
-        case 'internal_transaction':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Internal Transaction
-                      </Tag>
-                </div>
-            )
-        default:
-            return (
-                <div className="mr-2 rtl:ml-2">
-                  <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Other 
-                      </Tag>
-                </div>
-            )
-    }
-} */
 
 export const paymentRecordMap: Record<string, PaymentRecordInfo> = {
     invoice: {
@@ -592,66 +409,13 @@ export function mapPaymentRecordToTag(paymentRecord: string): JSX.Element {
     )
 }
 
-/* export function mapPaymentRecordToTag(paymentRecord: string): JSX.Element {
-    switch (paymentRecord) {
-        case 'invoice':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Invoice
-                       </Tag>
-                </div>
-            )
-        case 'cash_receipt':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Cash Receipt
-                     </Tag>
-                </div>
-            )
-        case 'promotion':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                      <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Promotion
-                      </Tag>
-                </div>
-            )
-        case 'missing_document':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                       <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Missing Document
-                     </Tag>
-                </div>
-            )
-        case 'internal_transaction':
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-blue-600 bg-blue-100 dark:text-blue-100 dark:bg-blue-500/20 border-0 rounded">
-                    Internal Transaction
-                     </Tag>
-                </div>
-            )
-        default:
-            return (
-                <div className="mr-2 rtl:ml-2">
-                     <Tag className="text-gray-600 bg-gray-100 dark:text-gray-100 dark:bg-gray-500/20 border-0 rounded">
-                    Other
-                      </Tag>
-                </div>
-            )
-    }
-} */
-
 export const productVolumeMap: Record<string, ProductVolumeInfo> = {
-    third_liter: {
+    0.33: {
         productVolumeKey: '0,33',
         className:
             'text-pink-800 bg-pink-300 dark:text-pink-300 dark:bg-pink-800/20 border-0 rounded',
     },
-    half_liter: {
+    0.5: {
         productVolumeKey: '0,5',
         className:
             'text-teal-800 bg-teal-300 dark:text-teal-300 dark:bg-teal-800/20 border-0 rounded',
