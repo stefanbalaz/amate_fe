@@ -19,6 +19,8 @@ import * as Yup from 'yup'
 import { useAppSelector } from '@/store'
 import productFlavorMap from '@/configs/order.overview/productFlavorMap'
 import OrderProducts from '../OrderDetails/components/OrderProducts'
+import toast from '@/components/ui/toast'
+import Notification from '@/components/ui/Notification'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikHelpers<any>
@@ -102,6 +104,10 @@ type FormModel = {
     }
 }
 
+/* export type FormModel = Omit<InitialData, 'tags'> & {
+    tags: { label: string; value: string }[] | string[]
+} */
+
 export type SetSubmitting = (isSubmitting: boolean) => void
 
 export type OnDeleteCallback = React.Dispatch<React.SetStateAction<boolean>>
@@ -119,6 +125,10 @@ type ProductFormProps = {
 const { useUniqueId } = hooks
 
 const validationSchema = Yup.object().shape({
+    // orderPartner: Yup.string().required('Partner Name Required'),
+    /*  partnerExternalOrderNumber: Yup.string().required(
+        'External Order Number Required'
+    ), */
     /*   orderCreationDate: Yup.date().required('Order Creation Date Required'),
     name: Yup.string().required('Product Name Required'),
     price: Yup.number().required('Price Required'),
@@ -214,7 +224,11 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
             // Set default values for other properties
             orderCreationDate: new Date(),
             orderStatus: 'preliminary_order',
-            orderPartner: '',
+            // OrderPartner selected only to avoid error message
+            orderPartner: {
+                ID: '65d60e53cda424cd4331d937',
+                externalOrderNumber: '',
+            },
             // Set productVolume property for each order product
 
             orderProduct: productFlavorArray.map(({ ID }) => ({
@@ -435,16 +449,29 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
     const productAmounts = useAppSelector((state) => state.product)
     console.log('productAmounts', productAmounts)
 
-    const handleSubmit = async (
-        // values: FormModel,
-
-        { setSubmitting }: FormikRef
+    const openNotification = (
+        type: 'success' | 'warning' | 'danger' | 'info'
     ) => {
+        toast.push(
+            <Notification
+                title={type.charAt(0).toUpperCase() + type.slice(1)}
+                type={type}
+            >
+                Order created successfully.
+            </Notification>
+        )
+    }
+
+    const handleSubmit = async (
+        values: FormModel,
+        setSubmitting: SetSubmitting
+    ): Promise<void> => {
         console.log('Form submitted with values:', formData)
+        console.log('FormikHelpers object:', { setSubmitting })
+        console.log('handleSubmit called with setSubmitting:', setSubmitting)
 
         try {
             // Call the endpoint to submit the form data
-            //const response = await fetch('http://localhost:8000/order/', {
             const response = await fetch('https://amate.onrender.com/order/', {
                 method: 'POST',
                 headers: {
@@ -460,6 +487,7 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
                 const body = await response.json()
                 console.log('Response body:', body)
                 // Handle success (if needed)
+                openNotification('success')
             } else {
                 // Handle error response
                 console.error('Error submitting form:', response.statusText)
@@ -469,6 +497,7 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
             // Handle other errors (e.g., network issues)
         } finally {
             // Set submitting to false
+
             setSubmitting(false)
         }
     }
@@ -480,7 +509,10 @@ const ProductForm = forwardRef<FormikRef, ProductFormProps>((props, ref) => {
                     ...initialData,
                 }}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit}
+                // onSubmit={handleSubmit}
+                onSubmit={(values, { setSubmitting }) => {
+                    handleSubmit(values, setSubmitting)
+                }}
             >
                 {({ values, touched, errors, isSubmitting }) => (
                     <Form>

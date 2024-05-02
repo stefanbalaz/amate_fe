@@ -17,28 +17,42 @@ import AsyncSelect from 'react-select/async'
 type Options = {
     label: string
     value: string
+    tags: string
 }[]
 
 type FormFieldsName = {
-    orderNumber: string
     orderPartner: string
-    orderStatus: string
-    orderCreationDate: Date
-    name: string
-    productCode: string
-    description: string
+    partnerExternalOrderNumber: string
 }
+
+/* type PartnerInformationFields = {
+    touched: FormikTouched<FormFieldsName>
+    errors: FormikErrors<FormFieldsName>
+    values: {
+        orderPartner: string
+        partnerExternalOrderNumber: string
+        tags: Options
+        [key: string]: unknown
+    }
+    onFieldChange: (fieldName: string, value: any) => void
+} */
 
 type PartnerInformationFields = {
     touched: FormikTouched<FormFieldsName>
     errors: FormikErrors<FormFieldsName>
     values: {
         orderPartner: string
-        tags: Options
+        partnerExternalOrderNumber: string
+        tags: Options // Assuming Options type includes a property named 'tags'
         [key: string]: unknown
     }
     onFieldChange: (fieldName: string, value: any) => void
 }
+
+/* type PartnerInformationFields = {
+    touched: FormikTouched<FormFieldsName>
+    errors: FormikErrors<FormFieldsName>
+} */
 
 const filterPartners = (inputValue, partners) => {
     return partners.filter(
@@ -129,6 +143,10 @@ const PartnerInformationFields = (props: PartnerInformationFields) => {
                                 loadOptions(inputValue, callback)
                             }
                             defaultOptions
+                            defaultValue={{
+                                label: 'Mariatchi',
+                                value: 'mariatchi',
+                            }} // Set default value here
                             //  onChange={handlePartnerChange}
                             onChange={(selectedOption) =>
                                 handleFieldChange('orderPartner', {
